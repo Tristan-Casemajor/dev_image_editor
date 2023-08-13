@@ -1,12 +1,35 @@
 #:set spacing_bottom_elements dp(10)
 
-<ColorSlider>:
-    size_hint: 0.5, None
-    height: dp(40)
+<ColorSlider@Slider>:
     value_track: True
+    value_track_width: dp(5)
+    size_hint: None, 1
+    width: dp(150)
+
+
+<DummyWidget@Widget>:
 
 <BoxLayoutColorManual@BoxLayout>:
     spacing: spacing_bottom_elements
+
+<BoxLayoutColorManualForSlider@BoxLayout>:
+    spacing: spacing_bottom_elements
+    size_hint: 0.5, None
+    height: dp(40)
+
+<TextInputColor@TextInput>:
+    size_hint: None, None
+    size: dp(55), dp(27)
+    pos_hint: {"center_y": 0.5}
+
+<ColorLabel@Label>:
+
+    size_hint: None, None
+    size: self.texture_size
+    halign: "left"
+    pos_hint: {"center_y": 0.5}
+    font_size: dp(20)
+
 
 
 <ColorLayout>:
@@ -18,42 +41,65 @@
             keep_ratio: False
             allow_stretch: True
             source: "images/color_image.jpg"
-        ColorSlider:
-            value_track_color: 1, 0, 0, 1
-        ColorSlider:
-            value_track_color: 0, 1, 0, 1
-        ColorSlider:
-            value_track_color: 0, 0, 1, 1
-        ColorSlider:
-            value_track_color: 0.1, 0.1, 0.1, 0.6
-        ColorSlider:
-            value_track_color: 0.1, 0.1, 0.1, 1
+
+        BoxLayoutColorManualForSlider:
+            ColorLabel:
+                text: root.slider_red_title + " : "
+            ColorSlider:
+                value_track_color: 1, 0, 0, 1
+        BoxLayoutColorManualForSlider:
+            ColorLabel:
+                text: root.slider_green_title + " : "
+            ColorSlider:
+                value_track_color: 0, 1, 0, 1
+        BoxLayoutColorManualForSlider:
+            ColorLabel:
+                text: root.slider_blue_title + " : "
+            ColorSlider:
+                value_track_color: 0, 0, 1, 1
+        BoxLayoutColorManualForSlider:
+            ColorLabel:
+                text: root.slider_alpha_title + " : "
+            ColorSlider:
+                value_track_color: 0.1, 0.1, 0.1, 0.6
+        BoxLayoutColorManualForSlider:
+            ColorLabel:
+                text: root.slider_brightness_title + " : "
+            ColorSlider:
+                value_track_color: 0.1, 0.1, 0.1, 1
         BoxLayout:
             orientation: "vertical"
             spacing: spacing_bottom_elements
             BoxLayoutColorManual:
-                Label:
+                ColorLabel:
                     text: root.text_hex_color + " : "
-                TextInput:
+                TextInputColor:
+
             BoxLayoutColorManual:
-                Label:
-                    text: root.text_hex_color + " : "
-                TextInput:
-                TextInput:
-                TextInput:
+                ColorLabel:
+                    text: root.text_rgb_color + "(0-255) : "
+                TextInputColor:
+                TextInputColor:
+                TextInputColor:
+
             BoxLayoutColorManual:
-                Label:
-                    text: root.text_hex_color + " : "
-                TextInput:
-                TextInput:
-                TextInput:
+                ColorLabel:
+                    text: root.text_rgb_color + "(0-1) : "
+                TextInputColor:
+                TextInputColor:
+                TextInputColor:
 
 
     BoxLayout:
         size_hint: None, 1
-        width: dp(70)
+        width: dp(80)
+        DummyWidget:
+            width: dp(20)
         Image:
             source: "images/result_arrow.png"
+            size_hint: None, None
+            size: dp(60), dp(60)
+            pos_hint: {"center_y": 0.5}
     BoxLayout:
         size_hint: 0.5, 1
         Button:
