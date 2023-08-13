@@ -1,0 +1,59 @@
+#:set spacing_bottom_elements dp(10)
+
+<ColorSlider>:
+    size_hint: 0.5, None
+    height: dp(40)
+    value_track: True
+
+<BoxLayoutColorManual@BoxLayout>:
+    spacing: spacing_bottom_elements
+
+
+<ColorLayout>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(20)
+        ColorImage:
+            pos_hint: {"top": 1}
+            keep_ratio: False
+            allow_stretch: True
+            source: "images/color_image.jpg"
+        ColorSlider:
+            value_track_color: 1, 0, 0, 1
+        ColorSlider:
+            value_track_color: 0, 1, 0, 1
+        ColorSlider:
+            value_track_color: 0, 0, 1, 1
+        ColorSlider:
+            value_track_color: 0.1, 0.1, 0.1, 0.6
+        ColorSlider:
+            value_track_color: 0.1, 0.1, 0.1, 1
+        BoxLayout:
+            orientation: "vertical"
+            spacing: spacing_bottom_elements
+            BoxLayoutColorManual:
+                Label:
+                    text: root.text_hex_color + " : "
+                TextInput:
+            BoxLayoutColorManual:
+                Label:
+                    text: root.text_hex_color + " : "
+                TextInput:
+                TextInput:
+                TextInput:
+            BoxLayoutColorManual:
+                Label:
+                    text: root.text_hex_color + " : "
+                TextInput:
+                TextInput:
+                TextInput:
+
+
+    BoxLayout:
+        size_hint: None, 1
+        width: dp(70)
+        Image:
+            source: "images/result_arrow.png"
+    BoxLayout:
+        size_hint: 0.5, 1
+        Button:
