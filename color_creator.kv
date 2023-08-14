@@ -51,6 +51,12 @@
             ColorImage:
                 alpha_slider: alpha_slider
                 hex_color_input: hex_color_input
+                text_input_red1: text_input_red1
+                text_input_green1: text_input_green1
+                text_input_blue1: text_input_blue1
+                text_input_red255: text_input_red255
+                text_input_green255: text_input_green255
+                text_input_blue255: text_input_blue255
                 pos: test.pos
                 size: test.size
                 keep_ratio: False
@@ -131,12 +137,15 @@
                 ColorLabel:
                     text: root.text_rgb_color + "(0-1) : "
                 TextInputColor:
+                    id: text_input_red1
                     foreground_color: 1, 0, 0, 1
                     text: str(int(red_slider.value/255)) if red_slider.value in [0, 255] else str(round(red_slider.value/255, 3))
                 TextInputColor:
+                    id: text_input_green1
                     foreground_color: 0, 1, 0, 1
                     text: str(int(green_slider.value/255)) if green_slider.value in [0, 255] else str(round(green_slider.value/255, 3))
                 TextInputColor:
+                    id: text_input_blue1
                     foreground_color: 0, 0, 1, 1
                     text: str(int(blue_slider.value/255)) if blue_slider.value in [0, 255] else str(round(blue_slider.value/255, 3))
                 TextInputColor:

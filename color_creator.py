@@ -1,18 +1,12 @@
-import io
-import os
 import threading
-from PIL import Image as Im
-from kivy.atlas import CoreImage
+from PIL import Image as Im  # Im to avoid conflicts with Kivy Image
 from kivy.graphics import Rectangle, Ellipse
 from kivy.lang import Builder
-from kivy.metrics import dp
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
-from kivy.uix.slider import Slider
 from kivy.uix.widget import Widget
 from kivy.utils import get_color_from_hex
-from kivy.utils import get_hex_from_color
 
 from app_translator import AppTranslator
 
@@ -21,14 +15,21 @@ Builder.load_file("color_creator.kv")
 class ColorImage(Image):
     hex_color_input = ObjectProperty(None)
     alpha_slider = ObjectProperty(None)
+    text_input_red1 = ObjectProperty(None)
+    text_input_green1 = ObjectProperty(None)
+    text_input_blue1 = ObjectProperty(None)
+    text_input_red255 = ObjectProperty(None)
+    text_input_green255 = ObjectProperty(None)
+    text_input_blue255 = ObjectProperty(None)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         with self.canvas.after:
             self.selector = Ellipse(size=(10, 10), pos=(10, 10))
-    def on_touch_down(self, touch):
-        self.hex_color_input.text = ""
-        self.selector.pos = touch.pos
-        if self.collide_point(*touch.pos):  # Vérifie si le touch est sur ce widget
+
+    def image_color_selection(self, touch):
+        if self.collide_point(*touch.pos):
+            self.selector.pos = touch.pos
             try:
                 image_select = Im.open("image_resized.jpg")
                 color_rgb = image_select.getpixel((touch.pos[0]-self.pos[0], abs((touch.pos[1] - self.pos[1]) - self.height)))
@@ -36,25 +37,21 @@ class ColorImage(Image):
                 alpha = "{:02X}".format(int(self.alpha_slider.value))
                 color_hex_rgba = color_hex_rgb + alpha
                 self.hex_color_input.text = color_hex_rgba
+                self.text_input_red1.text = str(round(color_rgb[0] / 255, 2))
+                self.text_input_green1.text = str(round(color_rgb[1] / 255, 2))
+                self.text_input_blue1.text = str(round(color_rgb[2] / 255, 2))
+                self.text_input_red255.text = str(round(color_rgb[0], 2))
+                self.text_input_green255.text = str(round(color_rgb[1], 2))
+                self.text_input_blue255.text = str(round(color_rgb[2], 2))
             except Exception as e:
                 print(e)
                 print(touch.pos[0], touch.pos[1])
+    def on_touch_down(self, touch):
+        self.image_color_selection(touch)
 
     def on_touch_move(self, touch):
-        self.selector.pos = touch.pos
-        self.hex_color_input.text = ""
-        if self.collide_point(*touch.pos):  # Vérifie si le touch est sur ce widget
-            try:
-                image_select = Im.open("image_resized.jpg")
-                color_rgb = image_select.getpixel(
-                    (touch.pos[0] - self.pos[0], abs((touch.pos[1] - self.pos[1]) - self.height)))
-                color_hex_rgb = "#{:02X}{:02X}{:02X}".format(*color_rgb)
-                alpha = "{:02X}".format(int(self.alpha_slider.value))
-                color_hex_rgba = color_hex_rgb + alpha
-                self.hex_color_input.text = color_hex_rgba
-            except Exception as e:
-                print(e)
-                print(touch.pos[0], touch.pos[1])
+        self.image_color_selection(touch)
+
 
     def on_size(self, *args):
         try:
@@ -67,6 +64,8 @@ class ColorImage(Image):
 
 class WidgetTest(Widget):
     pass
+
+
 class ColorLayout(BoxLayout):
     text_hex_color = StringProperty("Hexadecimal")
     text_rgb_color = StringProperty("RGBA")  # for RGB (0-255) and RGB (0-1)
@@ -82,6 +81,7 @@ class ColorLayout(BoxLayout):
     brightness_slider = ObjectProperty(None)
     hex_color = StringProperty("#00000000")
     list_value_brightness = []
+    red1 = StringProperty("0")
 
 
     def __init__(self, **kwargs):
@@ -160,17 +160,16 @@ class ColorLayout(BoxLayout):
             alpha_value = '{:02x}'.format(int(alpha))
             self.hex_color = actual_color[0:7] + alpha_value
 
-    def test(self, value):
-        print(type(value))
-        value_int = 255-int(value)
-        value_round = round(255-value, 2)
-        print(value_int, value_round)
-        if value in [0, 255]:
-            self.alpha_slider.value = value_int
-            return str(value_int)
-        else:
-            self.alpha_slider.value = value_round
-            return str(value_round)
+    def test(self):
+        return
+        color_rgba = get_color_from_hex(self.hex_color)
+        red = str(color_rgba[0])
+        green = str(color_rgba[1])
+        blue = str(color_rgba[2])
+        alpha = str(color_rgba[3])
+        self.red1 = red
+
+
 
     def on_alpha_slider(self, *args):
         self.alpha_slider.value = 255
