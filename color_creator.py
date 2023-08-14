@@ -1,18 +1,51 @@
+import io
+import os
 import threading
-
+from PIL import Image as Im
+from kivy.atlas import CoreImage
+from kivy.graphics import Rectangle
 from kivy.lang import Builder
+from kivy.metrics import dp
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.uix.slider import Slider
+from kivy.uix.widget import Widget
+from kivy.utils import get_color_from_hex
+from kivy.utils import get_hex_from_color
 
 from app_translator import AppTranslator
 
 Builder.load_file("color_creator.kv")
 
 class ColorImage(Image):
-    pass
+    hex_color_input = ObjectProperty(None)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    def on_touch_down(self, touch):
+        self.hex_color_input.text = ""
+        if self.collide_point(*touch.pos):  # Vérifie si le touch est sur ce widget
+            try:
+                image_select = Im.open("image_resized.jpg")
+                color_rgb = image_select.getpixel((touch.pos[0]-self.pos[0], abs((touch.pos[1] - self.pos[1]) - self.height)))
+                color_hex = "#{:02X}{:02X}{:02X}".format(*color_rgb)
+                print(color_rgb)
+                self.hex_color_input.text = color_hex[0:7]
+            except Exception as e:
+                print(e)
+                print(touch.pos[0], touch.pos[1])
 
+    def on_size(self, *args):
+        try:
+            image = Im.open("images/color_image.jpg")
+            size = (int(self.width), int(self.height))
+            image_resize = image.resize(size)
+            image_resize.save("image_resized.jpg")
+        except:
+            pass
+
+class WidgetTest(Widget):
+    pass
 class ColorLayout(BoxLayout):
     text_hex_color = StringProperty("Hexadecimal")
     text_rgb_color = StringProperty("RGBA")  # for RGB (0-255) and RGB (0-1)
@@ -26,7 +59,7 @@ class ColorLayout(BoxLayout):
     blue_slider = ObjectProperty(None)
     alpha_slider = ObjectProperty(None)
     brightness_slider = ObjectProperty(None)
-    hex_color = StringProperty("")
+    hex_color = StringProperty("#00000000")
     list_value_brightness = []
 
 
@@ -101,3 +134,18 @@ class ColorLayout(BoxLayout):
         rgba = (int(red), int(green), int(blue), int(alpha))
         hex = '#{:02x}{:02x}{:02x}{:02x}'.format(*rgba)
         self.hex_color = hex
+
+    def test(self, value):
+        print(type(value))
+        value_int = 255-int(value)
+        value_round = round(255-value, 2)
+        print(value_int, value_round)
+        if value in [0, 255]:
+            self.alpha_slider.value = value_int
+            return str(value_int)
+        else:
+            self.alpha_slider.value = value_round
+            return str(value_round)
+
+    def on_alpha_slider(self, *args):
+        self.alpha_slider.value = 255

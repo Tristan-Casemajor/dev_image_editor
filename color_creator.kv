@@ -1,4 +1,5 @@
 #:set spacing_bottom_elements dp(10)
+#:import utils kivy.utils
 
 <ColorSlider@Slider>:
     value_track: True
@@ -40,18 +41,20 @@
     blue_slider: blue_slider
     alpha_slider: alpha_slider
     brightness_slider: brightness_slider
-    #DummyWidget:
-        #size_hint: None, None
-        #size: dp(0), dp(0)
-        #name: root.color_change_indicator
+
     BoxLayout:
         orientation: "vertical"
         padding: dp(20)
-        ColorImage:
+        WidgetTest:
+            id: test
             pos_hint: {"top": 1}
-            keep_ratio: False
-            allow_stretch: True
-            source: "images/color_image.jpg"
+            ColorImage:
+                hex_color_input: hex_color_input
+                pos: test.pos
+                size: test.size
+                keep_ratio: False
+                allow_stretch: True
+                source: "images/color_image.jpg"
 
         BoxLayoutColorManualForSlider:
             ColorLabel:
@@ -85,6 +88,7 @@
                 value: float(text_input_alpha255.text) if root.test_value(text_input_alpha255.text) else self.value
                 value_track_color: 0.1, 0.1, 0.1, 0.6
                 on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
+                values: [i for i in range(255, 0, -1)]
         BoxLayoutColorManualForSlider:
             ColorLabel:
                 text: root.slider_brightness_title + " : "
@@ -99,6 +103,7 @@
                 ColorLabel:
                     text: root.text_hex_color + " : "
                 TextInputColor:
+                    id: hex_color_input
                     width: dp(100)
                     text: root.hex_color
 
@@ -127,7 +132,7 @@
                 TextInputColor:
                     text: str(int(blue_slider.value/255)) if blue_slider.value in [0, 255] else str(round(blue_slider.value/255, 3))
                 TextInputColor:
-                    text: str(int(alpha_slider.value/255)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value/255, 3))
+                    text: str(int((alpha_slider.value)/255)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value/255, 3))
 
     BoxLayout:
         size_hint: None, 1
@@ -139,6 +144,18 @@
             size_hint: None, None
             size: dp(60), dp(60)
             pos_hint: {"center_y": 0.5}
-    BoxLayout:
+    Widget:
+        id: widget_result
         size_hint: 0.5, 1
-        Button:
+        Image:
+            pos: widget_result.center_x-self.width/2, widget_result.center_y-self.height/2
+            size: dp(120), dp(100)
+            keep_ratio: False
+            allow_stretch: True
+            canvas.after:
+                Color:
+                    rgba: utils.get_color_from_hex(hex_color_input.text)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            source: "images/image_without_background.jpg"
