@@ -39,7 +39,7 @@ class MainTabbedPanel(TabbedPanel):
 
     def language(self):
         #pass
-        lang = "es"
+        lang = "en"
         self.tab_images = AppTranslator.translate_text("Image Editing", lang)
         self.tab_color = AppTranslator.translate_text("Color Creation", lang)
         self.tab_param = AppTranslator.translate_text("Application Settings", lang)
@@ -49,7 +49,7 @@ class SplashScreen(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         with self.canvas:
-            self.rectangle_background = Rectangle(pos=self.pos, size=self.size, source="images/background_splashscreen")
+            self.rectangle_background = Rectangle(pos=self.pos, size=self.size, source="images/background_splashscreen.png")
         self.image_splashscreen = Image(source="images/logo_dev_icon_editor.jpg", size=(dp(150), dp(150)))
         self.add_widget(self.image_splashscreen)
     def on_size(self, *args):

@@ -5,6 +5,8 @@
     value_track_width: dp(5)
     size_hint: None, 1
     width: dp(150)
+    min: 0
+    max: 255
 
 
 <DummyWidget@Widget>:
@@ -21,9 +23,9 @@
     size_hint: None, None
     size: dp(55), dp(27)
     pos_hint: {"center_y": 0.5}
+    multiline: False
 
 <ColorLabel@Label>:
-
     size_hint: None, None
     size: self.texture_size
     halign: "left"
@@ -33,6 +35,15 @@
 
 
 <ColorLayout>:
+    red_slider: red_slider
+    green_slider: green_slider
+    blue_slider: blue_slider
+    alpha_slider: alpha_slider
+    brightness_slider: brightness_slider
+    #DummyWidget:
+        #size_hint: None, None
+        #size: dp(0), dp(0)
+        #name: root.color_change_indicator
     BoxLayout:
         orientation: "vertical"
         padding: dp(20)
@@ -46,26 +57,40 @@
             ColorLabel:
                 text: root.slider_red_title + " : "
             ColorSlider:
+                id: red_slider
+                value: float(text_input_red255.text) if root.test_value(text_input_red255.text) else self.value
                 value_track_color: 1, 0, 0, 1
+                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
         BoxLayoutColorManualForSlider:
             ColorLabel:
                 text: root.slider_green_title + " : "
             ColorSlider:
+                id: green_slider
+                value: float(text_input_green255.text) if root.test_value(text_input_green255.text) else self.value
                 value_track_color: 0, 1, 0, 1
+                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
         BoxLayoutColorManualForSlider:
             ColorLabel:
                 text: root.slider_blue_title + " : "
             ColorSlider:
+                id: blue_slider
+                value: float(text_input_blue255.text) if root.test_value(text_input_blue255.text) else self.value
                 value_track_color: 0, 0, 1, 1
+                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
         BoxLayoutColorManualForSlider:
             ColorLabel:
                 text: root.slider_alpha_title + " : "
             ColorSlider:
+                id: alpha_slider
+                value: float(text_input_alpha255.text) if root.test_value(text_input_alpha255.text) else self.value
                 value_track_color: 0.1, 0.1, 0.1, 0.6
+                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
         BoxLayoutColorManualForSlider:
             ColorLabel:
                 text: root.slider_brightness_title + " : "
             ColorSlider:
+                id: brightness_slider
+                on_value: root.set_brightness(self.value)
                 value_track_color: 0.1, 0.1, 0.1, 1
         BoxLayout:
             orientation: "vertical"
@@ -74,21 +99,35 @@
                 ColorLabel:
                     text: root.text_hex_color + " : "
                 TextInputColor:
+                    width: dp(100)
+                    text: root.hex_color
 
             BoxLayoutColorManual:
                 ColorLabel:
                     text: root.text_rgb_color + "(0-255) : "
                 TextInputColor:
+                    id: text_input_red255
+                    text: str(int(red_slider.value)) if red_slider.value in [0, 255] else str(round(red_slider.value, 2))
                 TextInputColor:
+                    id: text_input_green255
+                    text: str(int(green_slider.value)) if green_slider.value in [0, 255] else str(round(green_slider.value, 2))
                 TextInputColor:
-
+                    id: text_input_blue255
+                    text: str(int(blue_slider.value)) if blue_slider.value in [0, 255] else str(round(blue_slider.value, 2))
+                TextInputColor:
+                    id: text_input_alpha255
+                    text: str(int(alpha_slider.value)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value, 2))
             BoxLayoutColorManual:
                 ColorLabel:
                     text: root.text_rgb_color + "(0-1) : "
                 TextInputColor:
+                    text: str(int(red_slider.value/255)) if red_slider.value in [0, 255] else str(round(red_slider.value/255, 3))
                 TextInputColor:
+                    text: str(int(green_slider.value/255)) if green_slider.value in [0, 255] else str(round(green_slider.value/255, 3))
                 TextInputColor:
-
+                    text: str(int(blue_slider.value/255)) if blue_slider.value in [0, 255] else str(round(blue_slider.value/255, 3))
+                TextInputColor:
+                    text: str(int(alpha_slider.value/255)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value/255, 3))
 
     BoxLayout:
         size_hint: None, 1
