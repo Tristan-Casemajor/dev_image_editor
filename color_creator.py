@@ -3,7 +3,7 @@ import os
 import threading
 from PIL import Image as Im
 from kivy.atlas import CoreImage
-from kivy.graphics import Rectangle
+from kivy.graphics import Rectangle, Ellipse
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty
@@ -20,17 +20,38 @@ Builder.load_file("color_creator.kv")
 
 class ColorImage(Image):
     hex_color_input = ObjectProperty(None)
+    alpha_slider = ObjectProperty(None)
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        with self.canvas.after:
+            self.selector = Ellipse(size=(10, 10), pos=(10, 10))
     def on_touch_down(self, touch):
         self.hex_color_input.text = ""
+        self.selector.pos = touch.pos
         if self.collide_point(*touch.pos):  # Vérifie si le touch est sur ce widget
             try:
                 image_select = Im.open("image_resized.jpg")
                 color_rgb = image_select.getpixel((touch.pos[0]-self.pos[0], abs((touch.pos[1] - self.pos[1]) - self.height)))
-                color_hex = "#{:02X}{:02X}{:02X}".format(*color_rgb)
-                print(color_rgb)
-                self.hex_color_input.text = color_hex[0:7]
+                color_hex_rgb = "#{:02X}{:02X}{:02X}".format(*color_rgb)
+                alpha = "{:02X}".format(int(self.alpha_slider.value))
+                color_hex_rgba = color_hex_rgb + alpha
+                self.hex_color_input.text = color_hex_rgba
+            except Exception as e:
+                print(e)
+                print(touch.pos[0], touch.pos[1])
+
+    def on_touch_move(self, touch):
+        self.selector.pos = touch.pos
+        self.hex_color_input.text = ""
+        if self.collide_point(*touch.pos):  # Vérifie si le touch est sur ce widget
+            try:
+                image_select = Im.open("image_resized.jpg")
+                color_rgb = image_select.getpixel(
+                    (touch.pos[0] - self.pos[0], abs((touch.pos[1] - self.pos[1]) - self.height)))
+                color_hex_rgb = "#{:02X}{:02X}{:02X}".format(*color_rgb)
+                alpha = "{:02X}".format(int(self.alpha_slider.value))
+                color_hex_rgba = color_hex_rgb + alpha
+                self.hex_color_input.text = color_hex_rgba
             except Exception as e:
                 print(e)
                 print(touch.pos[0], touch.pos[1])
@@ -130,10 +151,14 @@ class ColorLayout(BoxLayout):
             self.blue_slider.value = 255
 
 
-    def get_hex_color(self, red, green, blue, alpha):
-        rgba = (int(red), int(green), int(blue), int(alpha))
-        hex = '#{:02x}{:02x}{:02x}{:02x}'.format(*rgba)
-        self.hex_color = hex
+    def get_hex_color(self, red, green, blue, alpha, name="", actual_color=""):
+        if name != "alpha":
+            rgba = (int(red), int(green), int(blue), int(alpha))
+            hex = '#{:02x}{:02x}{:02x}{:02x}'.format(*rgba)
+            self.hex_color = hex
+        else:
+            alpha_value = '{:02x}'.format(int(alpha))
+            self.hex_color = actual_color[0:7] + alpha_value
 
     def test(self, value):
         print(type(value))

@@ -49,6 +49,7 @@
             id: test
             pos_hint: {"top": 1}
             ColorImage:
+                alpha_slider: alpha_slider
                 hex_color_input: hex_color_input
                 pos: test.pos
                 size: test.size
@@ -85,10 +86,10 @@
                 text: root.slider_alpha_title + " : "
             ColorSlider:
                 id: alpha_slider
+                name: "alpha" # allow difference this slider because he mut bu operational fir image color selection
                 value: float(text_input_alpha255.text) if root.test_value(text_input_alpha255.text) else self.value
                 value_track_color: 0.1, 0.1, 0.1, 0.6
-                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
-                values: [i for i in range(255, 0, -1)]
+                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value, self.name, hex_color_input.text)
         BoxLayoutColorManualForSlider:
             ColorLabel:
                 text: root.slider_brightness_title + " : "
@@ -111,27 +112,35 @@
                 ColorLabel:
                     text: root.text_rgb_color + "(0-255) : "
                 TextInputColor:
+                    foreground_color: 1, 0, 0, 1
                     id: text_input_red255
                     text: str(int(red_slider.value)) if red_slider.value in [0, 255] else str(round(red_slider.value, 2))
                 TextInputColor:
+                    foreground_color: 0, 1, 0, 1
                     id: text_input_green255
                     text: str(int(green_slider.value)) if green_slider.value in [0, 255] else str(round(green_slider.value, 2))
                 TextInputColor:
+                    foreground_color: 0, 0, 1, 1
                     id: text_input_blue255
                     text: str(int(blue_slider.value)) if blue_slider.value in [0, 255] else str(round(blue_slider.value, 2))
                 TextInputColor:
+                    foreground_color: 0.2, 0.2, 0.2, 0.8
                     id: text_input_alpha255
                     text: str(int(alpha_slider.value)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value, 2))
             BoxLayoutColorManual:
                 ColorLabel:
                     text: root.text_rgb_color + "(0-1) : "
                 TextInputColor:
+                    foreground_color: 1, 0, 0, 1
                     text: str(int(red_slider.value/255)) if red_slider.value in [0, 255] else str(round(red_slider.value/255, 3))
                 TextInputColor:
+                    foreground_color: 0, 1, 0, 1
                     text: str(int(green_slider.value/255)) if green_slider.value in [0, 255] else str(round(green_slider.value/255, 3))
                 TextInputColor:
+                    foreground_color: 0, 0, 1, 1
                     text: str(int(blue_slider.value/255)) if blue_slider.value in [0, 255] else str(round(blue_slider.value/255, 3))
                 TextInputColor:
+                    foreground_color: 0.2, 0.2, 0.2, 0.8
                     text: str(int((alpha_slider.value)/255)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value/255, 3))
 
     BoxLayout:
