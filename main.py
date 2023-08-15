@@ -1,3 +1,8 @@
+from kivy import Config
+Config.set('graphics', 'width', '880')
+Config.set('graphics', 'height', '560')
+Config.set('graphics', 'minimum_width', '790')
+Config.set('graphics', 'minimum_height', '300')
 from kivy.app import App
 from kivy.graphics import Rectangle
 from kivy.metrics import dp

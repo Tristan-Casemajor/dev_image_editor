@@ -126,7 +126,7 @@ class ColorLayout(BoxLayout):
 
 
     def language(self):
-        lang = "es"
+        lang = "fr"
         self.text_hex_color = AppTranslator.translate_text("Hexadecimal", lang)
         self.slider_red_title = AppTranslator.translate_text("Red", lang)
         self.slider_green_title = AppTranslator.translate_text("Green", lang)
