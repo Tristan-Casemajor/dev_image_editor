@@ -1,5 +1,6 @@
 #:set spacing_bottom_elements dp(10)
 #:import utils kivy.utils
+#:import Clipboard kivy.core.clipboard.Clipboard
 
 <ColorSlider@Slider>:
     value_track: True
@@ -8,6 +9,15 @@
     width: dp(150)
     min: 0
     max: 255
+    cursor_size: dp(40), dp(20)
+
+<CoverImage@CoverBehavior+Image>:
+    reference_size: self.texture_size
+
+<ColorInterface@RelativeLayout>:
+    CoverImage:
+        source: "images/background_color_part.jpg"
+    ColorLayout:
 
 
 <DummyWidget@Widget>:
@@ -33,6 +43,12 @@
     pos_hint: {"center_y": 0.5}
     font_size: dp(20)
 
+<CopyButton@Button>:
+    size_hint: None, None
+    size: dp(90), dp(30)
+    background_normal: ''
+    background_color: 0.1, 0.7, 0.1, 1
+    pos_hint: {"center_y": 0.5, "left": 1}
 
 
 <ColorLayout>:
@@ -41,120 +57,169 @@
     blue_slider: blue_slider
     alpha_slider: alpha_slider
     brightness_slider: brightness_slider
+    slider_scroll: slider_scroll
+    scroll_view: scroll_view
 
     BoxLayout:
-        orientation: "vertical"
-        padding: dp(20)
-        WidgetTest:
-            id: test
-            pos_hint: {"top": 1}
-            ColorImage:
-                alpha_slider: alpha_slider
-                hex_color_input: hex_color_input
-                text_input_red1: text_input_red1
-                text_input_green1: text_input_green1
-                text_input_blue1: text_input_blue1
-                text_input_red255: text_input_red255
-                text_input_green255: text_input_green255
-                text_input_blue255: text_input_blue255
-                pos: test.pos
-                size: test.size
-                keep_ratio: False
-                allow_stretch: True
-                source: "images/color_image.jpg"
+        orientation: "horizontal"
+        ScrollView:
+            id: scroll_view
+            do_scroll_y: True
+            do_scroll_x: False
+            scroll_y: slider_scroll.value
+            BoxLayout:
+                id: box_color_control
+                orientation: "vertical"
+                padding: dp(20)
+                size_hint: 1, None
+                #size_hint_min_y: root.height
+                size_hint_max_y: root.height
+                height: dp(500)
+                WidgetTest:
+                    id: test
+                    pos_hint: {"top": 1}
+                    ColorImage:
+                        alpha_slider: alpha_slider
+                        hex_color_input: hex_color_input
+                        text_input_red1: text_input_red1
+                        text_input_green1: text_input_green1
+                        text_input_blue1: text_input_blue1
+                        text_input_red255: text_input_red255
+                        text_input_green255: text_input_green255
+                        text_input_blue255: text_input_blue255
+                        pos: test.pos
+                        size: test.size
+                        keep_ratio: False
+                        allow_stretch: True
+                        source: "images/color_image.jpg"
 
-        BoxLayoutColorManualForSlider:
-            ColorLabel:
-                text: root.slider_red_title + " : "
-            ColorSlider:
-                id: red_slider
-                value: float(text_input_red255.text) if root.test_value(text_input_red255.text) else self.value
-                value_track_color: 1, 0, 0, 1
-                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
-        BoxLayoutColorManualForSlider:
-            ColorLabel:
-                text: root.slider_green_title + " : "
-            ColorSlider:
-                id: green_slider
-                value: float(text_input_green255.text) if root.test_value(text_input_green255.text) else self.value
-                value_track_color: 0, 1, 0, 1
-                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
-        BoxLayoutColorManualForSlider:
-            ColorLabel:
-                text: root.slider_blue_title + " : "
-            ColorSlider:
-                id: blue_slider
-                value: float(text_input_blue255.text) if root.test_value(text_input_blue255.text) else self.value
-                value_track_color: 0, 0, 1, 1
-                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
-        BoxLayoutColorManualForSlider:
-            ColorLabel:
-                text: root.slider_alpha_title + " : "
-            ColorSlider:
-                id: alpha_slider
-                name: "alpha" # allow difference this slider because he mut bu operational fir image color selection
-                value: float(text_input_alpha255.text) if root.test_value(text_input_alpha255.text) else self.value
-                value_track_color: 0.1, 0.1, 0.1, 0.6
-                on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value, self.name, hex_color_input.text)
-        BoxLayoutColorManualForSlider:
-            ColorLabel:
-                text: root.slider_brightness_title + " : "
-            ColorSlider:
-                id: brightness_slider
-                on_value: root.set_brightness(self.value)
-                value_track_color: 0.1, 0.1, 0.1, 1
+                BoxLayoutColorManualForSlider:
+                    ColorLabel:
+                        text: root.slider_red_title + " : "
+                    ColorSlider:
+                        id: red_slider
+                        cursor_image: "images/cursor_red_slider.png"
+                        value: float(text_input_red255.text) if root.test_value(text_input_red255.text) else self.value
+                        value_track_color: 1, 0, 0, 1
+                        on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
+                BoxLayoutColorManualForSlider:
+                    ColorLabel:
+                        text: root.slider_green_title + " : "
+                    ColorSlider:
+                        id: green_slider
+                        cursor_image: "images/cursor_green_slider.png"
+                        value: float(text_input_green255.text) if root.test_value(text_input_green255.text) else self.value
+                        value_track_color: 0, 1, 0, 1
+                        on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
+                BoxLayoutColorManualForSlider:
+                    ColorLabel:
+                        text: root.slider_blue_title + " : "
+                    ColorSlider:
+                        id: blue_slider
+                        cursor_image: "images/cursor_blue_slider.png"
+                        value: float(text_input_blue255.text) if root.test_value(text_input_blue255.text) else self.value
+                        value_track_color: 0, 0, 1, 1
+                        on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value)
+                BoxLayoutColorManualForSlider:
+                    ColorLabel:
+                        text: root.slider_alpha_title + " : "
+                    ColorSlider:
+                        id: alpha_slider
+                        cursor_image: "images/cursor_alpha_slider.png"
+                        name: "alpha" # allow difference this slider because he mut bu operational fir image color selection
+                        value: float(text_input_alpha255.text) if root.test_value(text_input_alpha255.text) else self.value
+                        value_track_color: 0.1, 0.1, 0.1, 0.6
+                        on_value: root.get_hex_color(red_slider.value, green_slider.value, blue_slider.value, alpha_slider.value, self.name, hex_color_input.text)
+                BoxLayoutColorManualForSlider:
+                    ColorLabel:
+                        text: root.slider_brightness_title + " : "
+                    ColorSlider:
+                        id: brightness_slider
+                        cursor_size: dp(30), dp(30)
+                        cursor_image: "images/cursor_brightness_slider.png"
+                        on_value: root.set_brightness(self.value)
+                        value_track_color: 0.1, 0.1, 0.1, 1
+                BoxLayout:
+                    orientation: "vertical"
+                    spacing: spacing_bottom_elements
+                    BoxLayoutColorManual:
+                        ColorLabel:
+                            text: root.text_hex_color + " : "
+                        TextInputColor:
+                            id: hex_color_input
+                            width: dp(100)
+                            text: root.hex_color
+                        CopyButton:
+                            on_press: root.copy_color_to_clipboard(hex_color_input.text, "hex")
+                            text: root.text_copy_button_hex
+
+                    BoxLayoutColorManual:
+                        ColorLabel:
+                            text: root.text_rgb_color + "(0-255) : "
+                        TextInputColor:
+                            foreground_color: 1, 0, 0, 1
+                            id: text_input_red255
+                            text: str(int(red_slider.value)) if red_slider.value in [0, 255] else str(round(red_slider.value, 2))
+                        TextInputColor:
+                            foreground_color: 0, 1, 0, 1
+                            id: text_input_green255
+                            text: str(int(green_slider.value)) if green_slider.value in [0, 255] else str(round(green_slider.value, 2))
+                        TextInputColor:
+                            foreground_color: 0, 0, 1, 1
+                            id: text_input_blue255
+                            text: str(int(blue_slider.value)) if blue_slider.value in [0, 255] else str(round(blue_slider.value, 2))
+                        TextInputColor:
+                            foreground_color: 0.2, 0.2, 0.2, 0.8
+                            id: text_input_alpha255
+                            text: str(int(alpha_slider.value)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value, 2))
+                        CopyButton:
+                            name: "rgba255"
+                            on_press: root.copy_color_to_clipboard((text_input_red255.text, text_input_green255.text, text_input_blue255.text, text_input_alpha255.text), "rgba", self.name)
+                            text: root.text_copy_button_rgba255
+
+                    BoxLayoutColorManual:
+                        ColorLabel:
+                            text: root.text_rgb_color + "(0-1) : "
+                        TextInputColor:
+                            id: text_input_red1
+                            foreground_color: 1, 0, 0, 1
+                            text: str(int(red_slider.value/255)) if red_slider.value in [0, 255] else str(round(red_slider.value/255, 3))
+                        TextInputColor:
+                            id: text_input_green1
+                            foreground_color: 0, 1, 0, 1
+                            text: str(int(green_slider.value/255)) if green_slider.value in [0, 255] else str(round(green_slider.value/255, 3))
+                        TextInputColor:
+                            id: text_input_blue1
+                            foreground_color: 0, 0, 1, 1
+                            text: str(int(blue_slider.value/255)) if blue_slider.value in [0, 255] else str(round(blue_slider.value/255, 3))
+                        TextInputColor:
+                            id: text_input_alpha1
+                            foreground_color: 0.2, 0.2, 0.2, 0.8
+                            text: str(int((alpha_slider.value)/255)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value/255, 3))
+                        CopyButton:
+                            name: "rgba1"
+                            on_press: root.copy_color_to_clipboard((text_input_red1.text, text_input_green1.text, text_input_blue1.text, text_input_alpha1.text), "rgba", self.name)
+                            text: root.text_copy_button_rgba1
         BoxLayout:
             orientation: "vertical"
-            spacing: spacing_bottom_elements
-            BoxLayoutColorManual:
-                ColorLabel:
-                    text: root.text_hex_color + " : "
-                TextInputColor:
-                    id: hex_color_input
-                    width: dp(100)
-                    text: root.hex_color
+            size_hint: None, 1
+            width: dp(8)
+            DummyWidget:   # We use Dummy widget because the cursor of the slider touch the list of TabbedPanelItems
+                size_hint: None, None
+                size: dp(8), dp(12)
+            Slider:
+                cursor_image: "images/cursor_scroll_slider.png"
+                cursor_size: dp(12), dp(60)
+                min: -0.6
+                max: 1
+                id: slider_scroll
+                value: self.max
+                orientation: "vertical"
 
-            BoxLayoutColorManual:
-                ColorLabel:
-                    text: root.text_rgb_color + "(0-255) : "
-                TextInputColor:
-                    foreground_color: 1, 0, 0, 1
-                    id: text_input_red255
-                    text: str(int(red_slider.value)) if red_slider.value in [0, 255] else str(round(red_slider.value, 2))
-                TextInputColor:
-                    foreground_color: 0, 1, 0, 1
-                    id: text_input_green255
-                    text: str(int(green_slider.value)) if green_slider.value in [0, 255] else str(round(green_slider.value, 2))
-                TextInputColor:
-                    foreground_color: 0, 0, 1, 1
-                    id: text_input_blue255
-                    text: str(int(blue_slider.value)) if blue_slider.value in [0, 255] else str(round(blue_slider.value, 2))
-                TextInputColor:
-                    foreground_color: 0.2, 0.2, 0.2, 0.8
-                    id: text_input_alpha255
-                    text: str(int(alpha_slider.value)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value, 2))
-            BoxLayoutColorManual:
-                ColorLabel:
-                    text: root.text_rgb_color + "(0-1) : "
-                TextInputColor:
-                    id: text_input_red1
-                    foreground_color: 1, 0, 0, 1
-                    text: str(int(red_slider.value/255)) if red_slider.value in [0, 255] else str(round(red_slider.value/255, 3))
-                TextInputColor:
-                    id: text_input_green1
-                    foreground_color: 0, 1, 0, 1
-                    text: str(int(green_slider.value/255)) if green_slider.value in [0, 255] else str(round(green_slider.value/255, 3))
-                TextInputColor:
-                    id: text_input_blue1
-                    foreground_color: 0, 0, 1, 1
-                    text: str(int(blue_slider.value/255)) if blue_slider.value in [0, 255] else str(round(blue_slider.value/255, 3))
-                TextInputColor:
-                    foreground_color: 0.2, 0.2, 0.2, 0.8
-                    text: str(int((alpha_slider.value)/255)) if alpha_slider.value in [0, 255] else str(round(alpha_slider.value/255, 3))
 
     BoxLayout:
         size_hint: None, 1
-        width: dp(80)
+        width: dp(70)
         DummyWidget:
             width: dp(20)
         Image:
@@ -164,7 +229,7 @@
             pos_hint: {"center_y": 0.5}
     Widget:
         id: widget_result
-        size_hint: 0.5, 1
+        size_hint: 0.4, 1
         Image:
             pos: widget_result.center_x-self.width/2, widget_result.center_y-self.height/2
             size: dp(120), dp(100)

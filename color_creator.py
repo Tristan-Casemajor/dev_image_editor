@@ -1,16 +1,19 @@
 import threading
 from PIL import Image as Im  # Im to avoid conflicts with Kivy Image
-from kivy.graphics import Rectangle, Ellipse
+from kivy.graphics import Rectangle, Ellipse, Color
+from kivy.uix.behaviors import CoverBehavior
 from kivy.lang import Builder
-from kivy.properties import StringProperty, NumericProperty, ObjectProperty
+from kivy.metrics import dp
+from kivy.properties import StringProperty, NumericProperty, ObjectProperty, Clock
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.uix.widget import Widget
-from kivy.utils import get_color_from_hex
-
+from kivy.core.clipboard import Clipboard
 from app_translator import AppTranslator
+from kivy.core.window import Window
 
 Builder.load_file("color_creator.kv")
+
 
 class ColorImage(Image):
     hex_color_input = ObjectProperty(None)
@@ -24,12 +27,20 @@ class ColorImage(Image):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.list_size = []
         with self.canvas.after:
-            self.selector = Ellipse(size=(10, 10), pos=(10, 10))
+            # self.selector = Ellipse(size=(10, 10), pos=(10, 10))
+            self.selector = Rectangle(pos=self.pos, size=(dp(19), dp(19)), source="images/colorselector.png")
 
     def image_color_selection(self, touch):
         if self.collide_point(*touch.pos):
-            self.selector.pos = touch.pos
+            size = self.selector.size
+            self.selector.pos = (touch.pos[0]-size[0]/2, touch.pos[1]-size[1]/2)
+            '''if self.selector.pos[0] < self.selector.size[0]:
+                print('yrbdb')
+                self.selector.pos = self.selector.size[0], self.selector.pos[1]
+            if self.selector.pos[0] > self.size[0]:
+                self.selector.pos = self.width, self.selector.pos[1]'''
             try:
                 image_select = Im.open("image_resized.jpg")
                 color_rgb = image_select.getpixel((touch.pos[0]-self.pos[0], abs((touch.pos[1] - self.pos[1]) - self.height)))
@@ -54,6 +65,8 @@ class ColorImage(Image):
 
 
     def on_size(self, *args):
+        size = self.selector.size
+        self.selector.pos = self.center[0] - size[0] / 2, self.center[1] - size[1] / 2
         try:
             image = Im.open("images/color_image.jpg")
             size = (int(self.width), int(self.height))
@@ -61,6 +74,8 @@ class ColorImage(Image):
             image_resize.save("image_resized.jpg")
         except:
             pass
+
+
 
 class WidgetTest(Widget):
     pass
@@ -82,21 +97,48 @@ class ColorLayout(BoxLayout):
     hex_color = StringProperty("#00000000")
     list_value_brightness = []
     red1 = StringProperty("0")
+    text_copy_button_hex = StringProperty("Copy")
+    text_copy_button_rgba255 = StringProperty("Copy")
+    text_copy_button_rgba1 = StringProperty("Copy")
+    text_copy_button_when_text_copied = "Copied"
+    text_copy_button_base = "copy"
+    slider_scroll = ObjectProperty(None)
+    scroll_view = ObjectProperty(None)
 
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         thread_lang = threading.Thread(target=self.language)
         thread_lang.start()
+        with self.canvas:
+            Color(rgba=(0, 0, 0, 0.3))
+            self.background = Rectangle(pos=self.pos)
+
+    def set_slider_opacity(self):
+        if Window.height >= 815:
+            self.slider_scroll.opacity = 0
+        else:
+            self.slider_scroll.opacity = 1
+
+    def on_size(self, *args):
+        self.set_slider_opacity()
+        self.background.size = self.size
+
 
     def language(self):
-        lang = "en"
+        lang = "es"
         self.text_hex_color = AppTranslator.translate_text("Hexadecimal", lang)
         self.slider_red_title = AppTranslator.translate_text("Red", lang)
         self.slider_green_title = AppTranslator.translate_text("Green", lang)
         self.slider_blue_title = AppTranslator.translate_text("Blue", lang)
         self.slider_alpha_title = AppTranslator.translate_text("Transparency", lang)
         self.slider_brightness_title = AppTranslator.translate_text("Brightness", lang)
+        self.text_copy_button_when_text_copied = AppTranslator.translate_text("Copied", lang)
+        self.text_copy_button_base = AppTranslator.translate_text("Copy", lang)
+        self.text_copy_button_hex = self.text_copy_button_base
+        self.text_copy_button_rgba255 = self.text_copy_button_base
+        self.text_copy_button_rgba1 = self.text_copy_button_base
+
         if lang == "ru":
             self.text_rgb_color = "РГБА"
         elif lang == "fr":
@@ -160,16 +202,29 @@ class ColorLayout(BoxLayout):
             alpha_value = '{:02x}'.format(int(alpha))
             self.hex_color = actual_color[0:7] + alpha_value
 
-    def test(self):
-        return
-        color_rgba = get_color_from_hex(self.hex_color)
-        red = str(color_rgba[0])
-        green = str(color_rgba[1])
-        blue = str(color_rgba[2])
-        alpha = str(color_rgba[3])
-        self.red1 = red
+    def copy_color_to_clipboard(self, value, color_format, name=""):  # name allow to make the difference between the RGBA255 copy button and RBGA1 copy button
+        if color_format == "hex":
+            Clipboard.copy(value)
+            self.text_copy_button_hex = self.text_copy_button_when_text_copied
+        elif color_format == "rgba":
+            Clipboard.copy(f"{value[0]}, {value[1]}, {value[2]}, {value[3]}")
 
+        if name == "rgba1":
+                self.text_copy_button_rgba1 = self.text_copy_button_when_text_copied
+        elif name == "rgba255":
+            self.text_copy_button_rgba255 = self.text_copy_button_when_text_copied
+        Clock.schedule_once(self.reset_copy_button_text, 1.6)
 
+    def reset_copy_button_text(self, dt):
+        tuple_copy_button_text = [self.text_copy_button_hex,
+                                  self.text_copy_button_rgba255,
+                                  self.text_copy_button_rgba1]
+        if self.text_copy_button_hex == self.text_copy_button_when_text_copied:
+            self.text_copy_button_hex = self.text_copy_button_base
+        if self.text_copy_button_rgba255 == self.text_copy_button_when_text_copied:
+            self.text_copy_button_rgba255 = self.text_copy_button_base
+        if self.text_copy_button_rgba1 == self.text_copy_button_when_text_copied:
+            self.text_copy_button_rgba1 = self.text_copy_button_base
 
     def on_alpha_slider(self, *args):
         self.alpha_slider.value = 255

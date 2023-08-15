@@ -11,3 +11,5 @@ class AppTranslator:
             return text
         else:
             return text_translate
+
+
