@@ -96,8 +96,15 @@ class SettingsLayout(BoxLayout):
 
 
     def language(self):
-        lang = "en"
-        self.text_label_language = AppTranslator.translate_text("Select a language", lang)
+        file = open("app_settings.json", "r")
+        settings_str = file.read()
+        file.close()
+        settings_dict = json.loads(settings_str)
+        language = settings_dict["language"]
+        self.text_label_language = AppTranslator.translate_text("Select a language", language)
 
     def on_size(self, *args):
         self.overlay.size = self.size
+
+    def res(self):
+        self.App.get_running_app().restart()

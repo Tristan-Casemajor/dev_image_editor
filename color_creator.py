@@ -1,3 +1,4 @@
+import json
 import threading
 from PIL import Image as Im  # Im to avoid conflicts with Kivy Image
 from kivy.graphics import Rectangle, Ellipse, Color
@@ -30,7 +31,7 @@ class ColorImage(Image):
         super().__init__(**kwargs)
         self.list_size = []
         with self.canvas.after:
-            self.selector = Rectangle(pos=self.pos, size=(dp(19), dp(19)), source="images/colorselector.png")
+            self.selector = Rectangle(pos=self.pos, size=(dp(19), dp(19)), source="images/colorselector_2.png")
 
     # This method is run when the user click or move on the ColorImage
     def image_color_selection(self, touch):
@@ -131,25 +132,29 @@ class ColorLayout(BoxLayout):
 
     # translate english GUI in the language choose by the user in the settings
     def language(self):
-        lang = "fr"
-        self.text_hex_color = AppTranslator.translate_text("Hexadecimal", lang)
-        self.slider_red_title = AppTranslator.translate_text("Red", lang)
-        self.slider_green_title = AppTranslator.translate_text("Green", lang)
-        self.slider_blue_title = AppTranslator.translate_text("Blue", lang)
-        self.slider_alpha_title = AppTranslator.translate_text("Transparency", lang)
-        self.slider_brightness_title = AppTranslator.translate_text("Brightness", lang)
-        self.text_copy_button_when_text_copied = AppTranslator.translate_text("Copied", lang)
-        self.text_copy_button_base = AppTranslator.translate_text("Copy", lang)
+        file = open("app_settings.json", "r")
+        settings_str = file.read()
+        file.close()
+        settings_dict = json.loads(settings_str)
+        language = settings_dict["language"]
+        self.text_hex_color = AppTranslator.translate_text("Hexadecimal", language)
+        self.slider_red_title = AppTranslator.translate_text("Red", language)
+        self.slider_green_title = AppTranslator.translate_text("Green", language)
+        self.slider_blue_title = AppTranslator.translate_text("Blue", language)
+        self.slider_alpha_title = AppTranslator.translate_text("Transparency", language)
+        self.slider_brightness_title = AppTranslator.translate_text("Brightness", language)
+        self.text_copy_button_when_text_copied = AppTranslator.translate_text("Copied", language)
+        self.text_copy_button_base = AppTranslator.translate_text("Copy", language)
         self.text_copy_button_hex = self.text_copy_button_base
         self.text_copy_button_rgba255 = self.text_copy_button_base
         self.text_copy_button_rgba1 = self.text_copy_button_base
 
-        if lang == "ru":
+        if language == "ru":
             self.text_rgb_color = "РГБА"
-        elif lang == "fr":
+        elif language == "fr":
             self.text_rgb_color = "RVBA"
         else:
-            self.text_rgb_color = AppTranslator.translate_text("RGBA", lang)
+            self.text_rgb_color = AppTranslator.translate_text("RGBA", language)
 
     @staticmethod
     def test_value(value):

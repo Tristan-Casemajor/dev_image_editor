@@ -13,3 +13,5 @@ class AppTranslator:
             return text_translate
 
 
+
+print(AppTranslator.translate_text("Rouge", "fr"))

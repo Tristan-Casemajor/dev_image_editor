@@ -65,7 +65,7 @@
                 language_name: "fr"
             WidgetFlagWithCheckBox:
                 image_source: "images/flags/german_flag.jpg"
-                language_name: "ge"
+                language_name: "de"
             WidgetFlagWithCheckBox:
                 image_source: "images/flags/portugal_flag.jpg"
                 language_name: "pt"
@@ -84,4 +84,6 @@
     SettingBoxLatout:
         LabelSetting:
             text: root.text_label_language
+        Button:
+            on_press: app.get_running_app().restart()
 

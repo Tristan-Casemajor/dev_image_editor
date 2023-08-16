@@ -1,3 +1,6 @@
+import json
+import subprocess
+
 from kivy import Config
 Config.set('graphics', 'width', '880')
 Config.set('graphics', 'height', '560')
@@ -7,7 +10,7 @@ import os
 from kivy.app import App
 from kivy.graphics import Rectangle
 from kivy.metrics import dp
-from kivy.properties import StringProperty, Clock
+from kivy.properties import StringProperty, Clock, ObjectProperty
 from kivy.uix.image import Image
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.widget import Widget
@@ -45,11 +48,14 @@ class MainTabbedPanel(TabbedPanel):
         thread_lang.start()
 
     def language(self):
-        #pass
-        lang = "en"
-        self.tab_images = AppTranslator.translate_text("Image Editing", lang)
-        self.tab_color = AppTranslator.translate_text("Color Creation", lang)
-        self.tab_settings = AppTranslator.translate_text("Application Settings", lang)
+        file = open("app_settings.json", "r")
+        settings_str = file.read()
+        file.close()
+        settings_dict = json.loads(settings_str)
+        language = settings_dict["language"]
+        self.tab_images = AppTranslator.translate_text("Image Editing", language)
+        self.tab_color = AppTranslator.translate_text("Color Creation", language)
+        self.tab_settings = AppTranslator.translate_text("Application Settings", language)
 
 
 class SplashScreen(Widget):
@@ -69,7 +75,6 @@ class SplashScreen(Widget):
 
 
 class DevImageEditApp(App):
-
     def on_start(self):
         self.check_temp_folder()
 
@@ -79,6 +84,7 @@ class DevImageEditApp(App):
     def build(self):
         self.icon = "images/logo_dev_icon_editor.jpg"
         self.title = "Dev Image Editor"
+        return Gui()
 
     # This function verift existence of .temp folder (important folder) and delete his
     # content et the start and at the shutdown of the app
@@ -97,5 +103,13 @@ class DevImageEditApp(App):
         else:
             os.mkdir(".temp")
 
+    def restart(self):
+        subprocess.Popen(['.\\venv\\Scripts\\python.exe', 'main.py'], shell=True)
+        App.get_running_app().stop()
+
+
+
+    def aaa(self):
+        os.system(".\\venv\\Scripts\\python.exe main.py")
 
 DevImageEditApp().run()
