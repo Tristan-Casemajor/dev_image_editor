@@ -1,7 +1,7 @@
 import threading
 from PIL import Image as Im  # Im to avoid conflicts with Kivy Image
 from kivy.graphics import Rectangle, Ellipse, Color
-from kivy.uix.behaviors import CoverBehavior
+from kivy.uix.behaviors import CoverBehavior  # not use in this file but use in the kv file, do not remove this line
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import StringProperty, NumericProperty, ObjectProperty, Clock
@@ -15,6 +15,7 @@ from kivy.core.window import Window
 Builder.load_file("color_creator.kv")
 
 
+# Image with all color RGB, you can click and it return the RGB code of the color you selected
 class ColorImage(Image):
     hex_color_input = ObjectProperty(None)
     alpha_slider = ObjectProperty(None)
@@ -29,20 +30,17 @@ class ColorImage(Image):
         super().__init__(**kwargs)
         self.list_size = []
         with self.canvas.after:
-            # self.selector = Ellipse(size=(10, 10), pos=(10, 10))
             self.selector = Rectangle(pos=self.pos, size=(dp(19), dp(19)), source="images/colorselector.png")
 
+    # This method is run when the user click or move on the ColorImage
     def image_color_selection(self, touch):
         if self.collide_point(*touch.pos):
             size = self.selector.size
             self.selector.pos = (touch.pos[0]-size[0]/2, touch.pos[1]-size[1]/2)
-            '''if self.selector.pos[0] < self.selector.size[0]:
-                print('yrbdb')
-                self.selector.pos = self.selector.size[0], self.selector.pos[1]
-            if self.selector.pos[0] > self.size[0]:
-                self.selector.pos = self.width, self.selector.pos[1]'''
             try:
-                image_select = Im.open("image_resized.jpg")
+                # The resized image is the color_image.jpg but resize at the size it have in the GUI
+                # it allow to get the goot RGB without decalage
+                image_select = Im.open(".temp/image_resized.jpg")
                 color_rgb = image_select.getpixel((touch.pos[0]-self.pos[0], abs((touch.pos[1] - self.pos[1]) - self.height)))
                 color_hex_rgb = "#{:02X}{:02X}{:02X}".format(*color_rgb)
                 alpha = "{:02X}".format(int(self.alpha_slider.value))
@@ -57,30 +55,35 @@ class ColorImage(Image):
             except Exception as e:
                 print(e)
                 print(touch.pos[0], touch.pos[1])
+
     def on_touch_down(self, touch):
         self.image_color_selection(touch)
 
     def on_touch_move(self, touch):
         self.image_color_selection(touch)
 
-
+    # this method run when the size of the window was changed
     def on_size(self, *args):
+        # keep the selector in the ColorImage
         size = self.selector.size
         self.selector.pos = self.center[0] - size[0] / 2, self.center[1] - size[1] / 2
+
+        # save the color_image.jpg at the size it have in the GUI
         try:
             image = Im.open("images/color_image.jpg")
             size = (int(self.width), int(self.height))
             image_resize = image.resize(size)
-            image_resize.save("image_resized.jpg")
+            image_resize.save(".temp/image_resized.jpg")
         except:
             pass
 
 
-
-class WidgetTest(Widget):
+# WidgetColorImage is the container of ColorImage
+class WidgetColorImage(Widget):
     pass
 
 
+# This Layout contain all color creation part
 class ColorLayout(BoxLayout):
     text_hex_color = StringProperty("Hexadecimal")
     text_rgb_color = StringProperty("RGBA")  # for RGB (0-255) and RGB (0-1)
@@ -105,26 +108,28 @@ class ColorLayout(BoxLayout):
     slider_scroll = ObjectProperty(None)
     scroll_view = ObjectProperty(None)
 
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         thread_lang = threading.Thread(target=self.language)
         thread_lang.start()
         with self.canvas:
+            # overlay because the background image is too bright
             Color(rgba=(0, 0, 0, 0.3))
-            self.background = Rectangle(pos=self.pos)
+            self.overlay = Rectangle(pos=self.pos)
 
+    # the scroll slider appear or disepear depending on the window size
     def set_slider_opacity(self):
         if Window.height >= 815:
             self.slider_scroll.opacity = 0
         else:
             self.slider_scroll.opacity = 1
 
+    #update slider scroll opacity and overlay size
     def on_size(self, *args):
         self.set_slider_opacity()
-        self.background.size = self.size
+        self.overlay.size = self.size
 
-
+    # translate english GUI in the language choose by the user in the settings
     def language(self):
         lang = "fr"
         self.text_hex_color = AppTranslator.translate_text("Hexadecimal", lang)
@@ -146,8 +151,8 @@ class ColorLayout(BoxLayout):
         else:
             self.text_rgb_color = AppTranslator.translate_text("RGBA", lang)
 
-
-    def test_value(self, value):
+    @staticmethod
+    def test_value(value):
         try:
             test = float(value)
             if not 0 <= test <= 255:
@@ -192,7 +197,6 @@ class ColorLayout(BoxLayout):
         elif self.blue_slider.value > 255:
             self.blue_slider.value = 255
 
-
     def get_hex_color(self, red, green, blue, alpha, name="", actual_color=""):
         if name != "alpha":
             rgba = (int(red), int(green), int(blue), int(alpha))
@@ -226,5 +230,6 @@ class ColorLayout(BoxLayout):
         if self.text_copy_button_rgba1 == self.text_copy_button_when_text_copied:
             self.text_copy_button_rgba1 = self.text_copy_button_base
 
+    # allow to set the alpha slider at 255 at the start of the app
     def on_alpha_slider(self, *args):
         self.alpha_slider.value = 255
