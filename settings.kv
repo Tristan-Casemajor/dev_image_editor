@@ -5,6 +5,12 @@
     language_name: self.language_name
 
     Image:
+        canvas.after:
+            Color:
+                rgba: 0.2, 0.2, 0.2, 0.7
+            Rectangle:
+                pos: self.pos
+                size: self.size
         pos: root.pos
         allow_stretch: True
         keep_ratio: False
@@ -13,15 +19,17 @@
     CheckBox:
         id: check_box_language
         name: root.language_name
-        width: dp(20)
-        height: dp(20)
+        width: dp(30)
+        height: dp(30)
         pos: root.pos[0], (root.pos[1]+root.height)-self.height
         on_active: root.set_language(self)
+
 
 
 <GridLayoutWidgetFlag@GridLayout>
     cols: 4
     spacing: dp(10)
+    size_hint_max_x: dp(300)
 
 <CoverImage@CoverBehavior+Image>:
     reference_size: self.texture_size
@@ -32,15 +40,25 @@
     SettingsLayout:
 
 <LabelSetting@Label>:
+    font_size: dp(20)
+
+<DummyWidget@Widget>
+
 
 <SettingBoxLatout@BoxLayout>:
+    size_hint: None, None
+    height: dp(100)
+    width: dp(550)
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+
 
 
 <SettingsLayout>:
     orientation: "vertical"
     SettingBoxLatout:
         LabelSetting:
-            text: "eeeee"
+            text: root.text_label_language + " : "
         GridLayoutWidgetFlag:
             WidgetFlagWithCheckBox:
                 image_source: "images/flags/french_flag.jpg"
@@ -58,9 +76,12 @@
                 image_source: "images/flags/spain_flag.jpg"
                 language_name: "es"
             WidgetFlagWithCheckBox:
-                image_source: "images/flags/uk_flag.jpg"
+                image_source: "images/flags/english_flag.png"
                 language_name: "en"
             WidgetFlagWithCheckBox:
                 image_source: "images/flags/ukraine_flag.png"
                 language_name: "uk"
+    SettingBoxLatout:
+        LabelSetting:
+            text: root.text_label_language
 
