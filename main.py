@@ -37,7 +37,7 @@ class Gui(Widget):
 class MainTabbedPanel(TabbedPanel):
     tab_images = StringProperty("Image Editing")
     tab_color = StringProperty("Color Creation")
-    tab_param = StringProperty("Application Settings")
+    tab_settings = StringProperty("Application Settings")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -49,7 +49,7 @@ class MainTabbedPanel(TabbedPanel):
         lang = "en"
         self.tab_images = AppTranslator.translate_text("Image Editing", lang)
         self.tab_color = AppTranslator.translate_text("Color Creation", lang)
-        self.tab_param = AppTranslator.translate_text("Application Settings", lang)
+        self.tab_settings = AppTranslator.translate_text("Application Settings", lang)
 
 
 class SplashScreen(Widget):

@@ -1,0 +1,66 @@
+
+<WidgetFlagWithCheckBox>:
+    image_source: self.image_source
+    check_box_language: check_box_language
+    language_name: self.language_name
+
+    Image:
+        pos: root.pos
+        allow_stretch: True
+        keep_ratio: False
+        size: root.size
+        source: root.image_source
+    CheckBox:
+        id: check_box_language
+        name: root.language_name
+        width: dp(20)
+        height: dp(20)
+        pos: root.pos[0], (root.pos[1]+root.height)-self.height
+        on_active: root.set_language(self)
+
+
+<GridLayoutWidgetFlag@GridLayout>
+    cols: 4
+    spacing: dp(10)
+
+<CoverImage@CoverBehavior+Image>:
+    reference_size: self.texture_size
+
+<SettingsInterface@RelativeLayout>:
+    CoverImage:
+        source: "images/settings_background.jpg"
+    SettingsLayout:
+
+<LabelSetting@Label>:
+
+<SettingBoxLatout@BoxLayout>:
+
+
+<SettingsLayout>:
+    orientation: "vertical"
+    SettingBoxLatout:
+        LabelSetting:
+            text: "eeeee"
+        GridLayoutWidgetFlag:
+            WidgetFlagWithCheckBox:
+                image_source: "images/flags/french_flag.jpg"
+                language_name: "fr"
+            WidgetFlagWithCheckBox:
+                image_source: "images/flags/german_flag.jpg"
+                language_name: "ge"
+            WidgetFlagWithCheckBox:
+                image_source: "images/flags/portugal_flag.jpg"
+                language_name: "pt"
+            WidgetFlagWithCheckBox:
+                image_source: "images/flags/russia_flag.png"
+                language_name: "ru"
+            WidgetFlagWithCheckBox:
+                image_source: "images/flags/spain_flag.jpg"
+                language_name: "es"
+            WidgetFlagWithCheckBox:
+                image_source: "images/flags/uk_flag.jpg"
+                language_name: "en"
+            WidgetFlagWithCheckBox:
+                image_source: "images/flags/ukraine_flag.png"
+                language_name: "uk"
+

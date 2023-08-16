@@ -1,18 +1,23 @@
 #:import color_creator color_creator
+#:import settings settings
 
 Gui:
 
-<TabbedPanelColor@TabbedPanelItem>:
-    ColorInterface:
+
 
 <MainTabbedPanel>:
     do_default_tab: False
     tab_width: dp(230)
     tab_pos: "top_mid"
-    TabbedPanelItem:
-        text: root.tab_images
-    TabbedPanelColor:
-        text: root.tab_color
 
     TabbedPanelItem:
-        text: root.tab_param
+        text: root.tab_images
+
+    TabbedPanelItem:
+        text: root.tab_color
+        ColorInterface:
+
+    TabbedPanelItem:
+        text: root.tab_settings
+        #SettingsInterface:
+        SettingsLayout:
