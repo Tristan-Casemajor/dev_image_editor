@@ -1,0 +1,16 @@
+{"message_no_internet":
+{"fr": "Impossible de traduire la UI (pas de connexion internet)",
+ "de": "UI kann nicht übersetzt werden (keine Internetverbindung)",
+ "pt": "Impossível traduzir a IU (sem ligação à Internet)",
+ "en": "Impossible to translate the UI (no internet connection)",
+ "ru": "Невозможность перевода пользовательского интерфейса (нет подключения к Интернету)",
+ "uk": "Неможливо перекласти інтерфейс користувача (немає підключення до Інтернету)",
+ "es": "Imposible traducir la interfaz de usuario (sin conexión a Internet)"},
+ "message_to_many_call":
+{"fr": "Quota dépassé pour les traductions de la UI, réessayez plus tard.",
+ "de": "Quote für UI-Übersetzungen überschritten, versuchen Sie es später noch einmal.",
+ "pt": "Quota excedida para traduções UI, tente novamente mais tarde.",
+ "en": "Quota exceeded for UI translations, try again later.",
+ "ru": "Превышена квота на переводы пользовательского интерфейса, повторите попытку позже.",
+ "uk": "Перевищено квоту для перекладу інтерфейсу, спробуйте пізніше.",
+ "es": "Se ha superado la cuota de traducciones de la interfaz de usuario, inténtelo más tarde."}}

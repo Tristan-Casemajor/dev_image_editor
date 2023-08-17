@@ -11,6 +11,14 @@
         Rectangle:
             pos: self.pos
             size: self.size
+    Widget: #Dummy widget to set a space between the icon and the right window border
+        size_hint: None, None
+        size: dp(5), 0
+    Image:
+        size_hint: None, None
+        pos_hint: {"center_y": 0.5}
+        size: root.icon_size, root.icon_size
+        source: "images/close_warning.png"
     Label:
         text: root.text_warning
 

@@ -1,3 +1,4 @@
+#:import Window kivy.core.window.Window
 
 <WidgetFlagWithCheckBox>:
     image_source: self.image_source
@@ -52,7 +53,25 @@
     pos_hint: {"center_x": 0.5, "center_y": 0.5}
 
 
-
+<LayoutApplyChange>:
+    size_hint: None, None
+    size: Window.width, self.height_depend_change
+    canvas.before:
+        Color:
+            rgba: root.red, root.green, root.blue, root.alpha
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Widget: #Dummy widget to set a space between the icon and the right window border
+        size_hint: None, None
+        size: dp(5), 0
+    Image:
+        size_hint: None, None
+        pos_hint: {"center_y": 0.5}
+        size: root.icon_size, root.icon_size
+        source: "images/close_warning.png"
+    Label:
+        text: root.text_reboot
 
 <SettingsLayout>:
     orientation: "vertical"
@@ -83,6 +102,8 @@
                 language_name: "uk"
     SettingBoxLatout:
         LabelSetting:
-            text: root.text_label_language
+            text: root.text_label_cursor
+
+    LayoutApplyChange:
 
 

@@ -26,18 +26,19 @@ class LayoutWarningLanguage(BoxLayout):
     blue = NumericProperty(0)
     alpha = NumericProperty(0)
     text_warning = StringProperty("")
+    icon_size = NumericProperty(0)
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if AppTranslator.test_language:
             pass
         else:
-            self.height_depend_language_aviable = dp(22)
+            self.height_depend_language_aviable = dp(25)
             self.red = 0.92
             self.green = 0.66
             self.blue = 0
             self.alpha = 1
-            self.text_warning = "Warning: Impossible to translate the GUI of the app"
-            Clock.schedule_once(self.remove_warning, 12)
+            self.text_warning = AppTranslator().get_warning()
+            self.icon_size = dp(20)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -47,14 +48,8 @@ class LayoutWarningLanguage(BoxLayout):
             self.blue = 0
             self.alpha = 0
             self.height_depend_language_aviable = 0
+            self.icon_size = 0
 
-    def remove_warning(self, dt):
-        self.text_warning = ""
-        self.red = 0
-        self.green = 0
-        self.blue = 0
-        self.alpha = 0
-        self.height_depend_language_aviable = 0
 
 
 class Gui(Widget):

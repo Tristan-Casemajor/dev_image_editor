@@ -1,12 +1,12 @@
 import threading
 import json
 from kivy.graphics import Color, Rectangle
-from kivy.properties import StringProperty, ObjectProperty, Clock
+from kivy.metrics import dp
+from kivy.properties import StringProperty, ObjectProperty, Clock, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.uix.behaviors import CoverBehavior  # not use in this file but use in the kv file, do not remove this line
 from kivy.uix.widget import Widget
-from app_translator import AppTranslator
 from app_translator import AppTranslator
 
 Builder.load_file("settings.kv")
@@ -33,7 +33,6 @@ class WidgetFlagWithCheckBox(Widget):
             if i.name == current_language:
                 i.active = True
 
-
     def set_language(self, widget):
         current_lang = AppTranslator.get_current_language()
         if widget.active:
@@ -52,7 +51,50 @@ class WidgetFlagWithCheckBox(Widget):
 
 
 
+class LayoutApplyChange(BoxLayout):
+    height_depend_change = NumericProperty(0)
+    red = NumericProperty(0)
+    green = NumericProperty(0)
+    blue = NumericProperty(0)
+    alpha = NumericProperty(0)
+    text_reboot = StringProperty("")
+    icon_size = NumericProperty(0)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.settings_app = self.get_settings()
+        Clock.schedule_interval(self.verify_change, 1.2)
 
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            self.text_reboot = ""
+            self.red = 0
+            self.green = 0
+            self.blue = 0
+            self.alpha = 0
+            self.height_depend_change = 0
+            self.icon_size = 0
+
+    def get_settings(self):
+        file = open("app_settings.json", "r", encoding="utf-8")
+        dict_settings_str = file.read()
+        file.close()
+        dict_settings = json.loads(dict_settings_str)
+        return dict_settings
+
+    def verify_change(self, dt):
+        actual_dict_settings = self.get_settings()
+        if actual_dict_settings == self.settings_app:
+            pass
+        else:
+            self.height_depend_change = dp(25)
+            self.red = 0.09
+            self.green = 0.92
+            self.blue = 0.44
+            self.alpha = 1
+            self.icon_size = dp(20)
+            self.text_reboot = AppTranslator().translate_text("close and reopen the application to apply changes",
+                                                              actual_dict_settings["language"])
+            self.settings_app = actual_dict_settings
 
 
 
