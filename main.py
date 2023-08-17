@@ -1,18 +1,16 @@
-import time
-
 from kivy import Config
 Config.set('graphics', 'width', '880')
 Config.set('graphics', 'height', '560')
 Config.set('graphics', 'minimum_width', '790')
 Config.set('graphics', 'minimum_height', '300')
 import json
+from get_settings_app import get_settings
 import os
 from kivy.uix.boxlayout import BoxLayout
-from kivy.core.window import Window
 from kivy.app import App
-from kivy.graphics import Rectangle
+from kivy.graphics import Rectangle, Color, Line
 from kivy.metrics import dp
-from kivy.properties import StringProperty, Clock, ObjectProperty, NumericProperty
+from kivy.properties import StringProperty, Clock, NumericProperty
 from kivy.uix.image import Image
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.widget import Widget
@@ -136,6 +134,16 @@ class DevImageEditApp(App):
                     os.rmdir(file_path)
         else:
             os.mkdir(".temp")
+    '''@staticmethod
+    def check_settings_file():
+        setting_file_exist = os.path.exists("app_settings.json")
+        base_settings = {"language": "fr",
+                         "color_selector": "images/colorselector.png",
+                         "color_part_background": "images/background_color_part.jpg",
+                         "cursor_color_type": "images/cursor_green_slider.png"}
+        if setting_file_exist:
+            dict_settings = get_settings()
+            for dict_settings in'''
 
 
 DevImageEditApp().run()

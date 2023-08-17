@@ -2,6 +2,7 @@
 #:import settings settings
 #:import Window kivy.core.window.Window
 
+
 <LayoutWarningLanguage>:
     size_hint: None, None
     size: Window.width, self.height_depend_language_aviable
@@ -22,20 +23,31 @@
     Label:
         text: root.text_warning
 
+<TabbedPanelItemMainGui@TabbedPanelItem>:
+    background_normal: ''
+    background_down: ''
+    background_color: (0.1, 0.8, 0.15, 1) if self.state == "down" else (0.35, 0.35, 0.35, 1)
+
 
 <MainTabbedPanel>:
+    canvas.before:
+        Color:
+            rgba: 0.35, 0.35, 0.35, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     do_default_tab: False
-    tab_width: dp(230)
+    tab_width: Window.width/3
     tab_pos: "top_mid"
 
-    TabbedPanelItem:
+    TabbedPanelItemMainGui:
         text: root.tab_images
 
-    TabbedPanelItem:
+    TabbedPanelItemMainGui:
         text: root.tab_color
         ColorInterface:
 
-    TabbedPanelItem:
+    TabbedPanelItemMainGui:
         text: root.tab_settings
-        #SettingsInterface:
         SettingsInterface:

@@ -8,6 +8,7 @@ from kivy.lang import Builder
 from kivy.uix.behaviors import CoverBehavior  # not use in this file but use in the kv file, do not remove this line
 from kivy.uix.widget import Widget
 from app_translator import AppTranslator
+from get_settings_app import get_settings
 
 Builder.load_file("settings.kv")
 
@@ -49,8 +50,6 @@ class WidgetFlagWithCheckBox(Widget):
             widget.active = True
 
 
-
-
 class LayoutApplyChange(BoxLayout):
     height_depend_change = NumericProperty(0)
     red = NumericProperty(0)
@@ -59,9 +58,10 @@ class LayoutApplyChange(BoxLayout):
     alpha = NumericProperty(0)
     text_reboot = StringProperty("")
     icon_size = NumericProperty(0)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.settings_app = self.get_settings()
+        self.settings_app = get_settings()
         Clock.schedule_interval(self.verify_change, 1.2)
 
     def on_touch_down(self, touch):
@@ -74,15 +74,8 @@ class LayoutApplyChange(BoxLayout):
             self.height_depend_change = 0
             self.icon_size = 0
 
-    def get_settings(self):
-        file = open("app_settings.json", "r", encoding="utf-8")
-        dict_settings_str = file.read()
-        file.close()
-        dict_settings = json.loads(dict_settings_str)
-        return dict_settings
-
     def verify_change(self, dt):
-        actual_dict_settings = self.get_settings()
+        actual_dict_settings = get_settings()
         if actual_dict_settings == self.settings_app:
             pass
         else:
@@ -95,7 +88,6 @@ class LayoutApplyChange(BoxLayout):
             self.text_reboot = AppTranslator().translate_text("close and reopen the application to apply changes",
                                                               actual_dict_settings["language"])
             self.settings_app = actual_dict_settings
-
 
 
 class SettingsLayout(BoxLayout):
