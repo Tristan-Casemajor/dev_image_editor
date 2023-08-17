@@ -1,8 +1,18 @@
 #:import color_creator color_creator
 #:import settings settings
+#:import Window kivy.core.window.Window
 
-#Gui:
-
+<LayoutWarningLanguage>:
+    size_hint: None, None
+    size: Window.width, self.height_depend_language_aviable
+    canvas.before:
+        Color:
+            rgba: root.red, root.green, root.blue, root.alpha
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        text: root.text_warning
 
 
 <MainTabbedPanel>:

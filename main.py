@@ -1,21 +1,60 @@
-import json
-import subprocess
+import time
 
 from kivy import Config
 Config.set('graphics', 'width', '880')
 Config.set('graphics', 'height', '560')
 Config.set('graphics', 'minimum_width', '790')
 Config.set('graphics', 'minimum_height', '300')
+import json
 import os
+from kivy.uix.boxlayout import BoxLayout
+from kivy.core.window import Window
 from kivy.app import App
 from kivy.graphics import Rectangle
 from kivy.metrics import dp
-from kivy.properties import StringProperty, Clock, ObjectProperty
+from kivy.properties import StringProperty, Clock, ObjectProperty, NumericProperty
 from kivy.uix.image import Image
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.widget import Widget
 from app_translator import AppTranslator
 import threading
+
+class LayoutWarningLanguage(BoxLayout):
+    height_depend_language_aviable = NumericProperty(0)
+    red = NumericProperty(0)
+    green = NumericProperty(0)
+    blue = NumericProperty(0)
+    alpha = NumericProperty(0)
+    text_warning = StringProperty("")
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if AppTranslator.test_language:
+            pass
+        else:
+            self.height_depend_language_aviable = dp(22)
+            self.red = 0.92
+            self.green = 0.66
+            self.blue = 0
+            self.alpha = 1
+            self.text_warning = "Warning: Impossible to translate the GUI of the app"
+            Clock.schedule_once(self.remove_warning, 12)
+
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            self.text_warning = ""
+            self.red = 0
+            self.green = 0
+            self.blue = 0
+            self.alpha = 0
+            self.height_depend_language_aviable = 0
+
+    def remove_warning(self, dt):
+        self.text_warning = ""
+        self.red = 0
+        self.green = 0
+        self.blue = 0
+        self.alpha = 0
+        self.height_depend_language_aviable = 0
 
 
 class Gui(Widget):
@@ -26,6 +65,9 @@ class Gui(Widget):
         self.main_gui = MainTabbedPanel()
         self.main_gui.opacity = 0
         self.add_widget(self.main_gui)
+        self.warning = LayoutWarningLanguage()
+        self.warning.opacity = 0
+        self.add_widget(self.warning)
         Clock.schedule_once(self.remove_splashscreen, 6)
 
     def on_size(self, *args):
@@ -35,6 +77,7 @@ class Gui(Widget):
     def remove_splashscreen(self, dt):
         self.splashscreen.opacity = 0
         self.main_gui.opacity = 1
+        self.warning.opacity = 1
 
 
 class MainTabbedPanel(TabbedPanel):
@@ -48,14 +91,10 @@ class MainTabbedPanel(TabbedPanel):
         thread_lang.start()
 
     def language(self):
-        file = open("app_settings.json", "r")
-        settings_str = file.read()
-        file.close()
-        settings_dict = json.loads(settings_str)
-        language = settings_dict["language"]
-        self.tab_images = AppTranslator.translate_text("Image Editing", language)
-        self.tab_color = AppTranslator.translate_text("Color Creation", language)
-        self.tab_settings = AppTranslator.translate_text("Application Settings", language)
+        language = AppTranslator.get_current_language()
+        self.tab_images = AppTranslator().translate_text("Image Editing", language)
+        self.tab_color = AppTranslator().translate_text("Color Creation", language)
+        self.tab_settings = AppTranslator().translate_text("Application Settings", language)
 
 
 class SplashScreen(Widget):
@@ -103,13 +142,5 @@ class DevImageEditApp(App):
         else:
             os.mkdir(".temp")
 
-    def restart(self):
-        subprocess.Popen(['.\\venv\\Scripts\\python.exe', 'main.py'], shell=True)
-        App.get_running_app().stop()
-
-
-
-    def aaa(self):
-        os.system(".\\venv\\Scripts\\python.exe main.py")
 
 DevImageEditApp().run()
