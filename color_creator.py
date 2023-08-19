@@ -1,4 +1,5 @@
 import json
+import os
 import threading
 from PIL import Image as Im  # Im to avoid conflicts with Kivy Image
 from kivy.graphics import Rectangle, Ellipse, Color
@@ -13,6 +14,8 @@ from kivy.core.clipboard import Clipboard
 from app_translator import AppTranslator
 from kivy.core.window import Window
 
+from settings_app_manager import SettingsManager
+
 Builder.load_file("color_creator.kv")
 
 
@@ -26,12 +29,19 @@ class ColorImage(Image):
     text_input_red255 = ObjectProperty(None)
     text_input_green255 = ObjectProperty(None)
     text_input_blue255 = ObjectProperty(None)
+    image_color_selector = StringProperty("")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        color_selector_base = SettingsManager.base_settings["color_selector"]
+        color_selector_in_settings = SettingsManager().get_settings().get("color_selector")
+        if os.path.exists(color_selector_in_settings):
+            self.image_color_selector = color_selector_in_settings
+        else:
+            self.image_color_selector = color_selector_base
         self.list_size = []
         with self.canvas.after:
-            self.selector = Rectangle(pos=self.pos, size=(dp(19), dp(19)), source="images/colorselector_2.png")
+            self.selector = Rectangle(pos=self.pos, size=(dp(19), dp(19)), source=self.image_color_selector)
 
     # This method is run when the user click or move on the ColorImage
     def image_color_selection(self, touch):

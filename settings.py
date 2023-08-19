@@ -8,7 +8,7 @@ from kivy.lang import Builder
 from kivy.uix.behaviors import CoverBehavior  # not use in this file but use in the kv file, do not remove this line
 from kivy.uix.widget import Widget
 from app_translator import AppTranslator
-from get_settings_app import get_settings
+from settings_app_manager import SettingsManager
 
 Builder.load_file("settings.kv")
 
@@ -49,6 +49,39 @@ class WidgetFlagWithCheckBox(Widget):
         elif widget.name == current_lang and not widget.active:
             widget.active = True
 
+class WidgetSelectorWithCheckBox(Widget):
+    image_source = StringProperty("")
+    check_box_selector = ObjectProperty(None)
+    selector_name = StringProperty("")
+    list_check_box = []
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Clock.schedule_once(self.init_selector, 4)
+
+    def on_check_box_selector(self, *args):
+        self.list_check_box.append(self.check_box_selector)
+
+    def init_selector(self, dt):
+        current_selector = SettingsManager().get_settings().get("color_selector")
+        print(current_selector)
+        for i in self.list_check_box:
+            if i.name == current_selector:
+                i.active = True
+
+    def set_selector(self, widget):
+        current_selector = SettingsManager().get_settings().get("color_selector")
+        if widget.active:
+            current_selector = widget.name
+            SettingsManager().update_settings({"color_selector": current_selector})
+            checks_box = self.list_check_box
+            self.list_check_box = []
+            for i in checks_box:
+                if i.name != current_selector:
+                    i.active = False
+                self.list_check_box.append(i)
+        elif widget.name == current_selector and not widget.active:
+            widget.active = True
 
 class LayoutApplyChange(BoxLayout):
     height_depend_change = NumericProperty(0)
@@ -61,7 +94,7 @@ class LayoutApplyChange(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.settings_app = get_settings()
+        self.settings_app = SettingsManager().get_settings()
         Clock.schedule_interval(self.verify_change, 1.2)
 
     def on_touch_down(self, touch):
@@ -75,7 +108,7 @@ class LayoutApplyChange(BoxLayout):
             self.icon_size = 0
 
     def verify_change(self, dt):
-        actual_dict_settings = get_settings()
+        actual_dict_settings = SettingsManager().get_settings()
         if actual_dict_settings == self.settings_app:
             pass
         else:
@@ -92,6 +125,7 @@ class LayoutApplyChange(BoxLayout):
 
 class SettingsLayout(BoxLayout):
     text_label_language = StringProperty("Select a language")
+    text_label_cursor = StringProperty("Select a color selector")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -104,6 +138,7 @@ class SettingsLayout(BoxLayout):
     def language(self):
         language = AppTranslator.get_current_language()
         self.text_label_language = AppTranslator().translate_text("Select a language", language)
+        self.text_label_cursor = AppTranslator().translate_text("Select a color selector", language)
 
     def on_size(self, *args):
         self.overlay.size = self.size

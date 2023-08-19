@@ -25,9 +25,34 @@
         pos: root.pos[0], (root.pos[1]+root.height)-self.height
         on_active: root.set_language(self)
 
+<WidgetSelectorWithCheckBox>:
+    image_source: self.image_source
+    check_box_selector: check_box_selector
+    selector_name: self.selector_name
+
+    Image:
+        canvas.after:
+            Color:
+                rgba: 0.2, 0.2, 0.2, 0.7
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        pos: root.pos
+        allow_stretch: True
+        keep_ratio: False
+        size: root.size
+        source: root.image_source
+    CheckBox:
+        id: check_box_selector
+        name: root.selector_name
+        width: dp(30)
+        height: dp(30)
+        pos: root.pos[0], (root.pos[1]+root.height)-self.height
+        on_active: root.set_selector(self)
 
 
-<GridLayoutWidgetFlag@GridLayout>
+
+<GridLayoutWidgetSettings@GridLayout>
     cols: 4
     spacing: dp(10)
     size_hint_max_x: dp(300)
@@ -42,6 +67,10 @@
 
 <LabelSetting@Label>:
     font_size: dp(20)
+    size_hint: None, None
+    size: self.texture_size
+    halign: "left"
+    pos_hint: {"center_y": 0.5}
 
 <DummyWidget@Widget>
 
@@ -50,6 +79,8 @@
     size_hint: None, None
     height: dp(100)
     width: dp(550)
+    spacing: dp(8)
+    padding: dp(8)
     pos_hint: {"center_x": 0.5, "center_y": 0.5}
 
 
@@ -75,10 +106,11 @@
 
 <SettingsLayout>:
     orientation: "vertical"
+    spacing: dp(15)
     SettingBoxLatout:
         LabelSetting:
             text: root.text_label_language + " : "
-        GridLayoutWidgetFlag:
+        GridLayoutWidgetSettings:
             WidgetFlagWithCheckBox:
                 image_source: "images/flags/french_flag.jpg"
                 language_name: "fr"
@@ -102,7 +134,17 @@
                 language_name: "uk"
     SettingBoxLatout:
         LabelSetting:
-            #text: root.text_label_cursor
+            text: root.text_label_cursor + " : "
+        GridLayoutWidgetSettings:
+            size_hint: None, 1
+            width: dp(210)
+            WidgetSelectorWithCheckBox:
+                image_source: "images/colorselector.png"
+                selector_name: "images/colorselector.png"
+            WidgetSelectorWithCheckBox:
+                image_source: "images/colorselector_2.png"
+                selector_name: "images/colorselector_2.png"
+
 
     LayoutApplyChange:
 

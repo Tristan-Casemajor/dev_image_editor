@@ -22,42 +22,42 @@ class AppTranslator:
     def translate_text(self, text, language):
         current_language = AppTranslator.get_current_language()
         if self.test_language and current_language != "en":
-            file = open("test1.txt", "w")
-            file.close()
             try:
                 translator = Translator(to_lang=language)
                 text_translate = translator.translate(text)
             except:
                 return text
             else:
-                file = open("test2.txt", "w")
-                file.close()
                 return text_translate
         else:
-            file = open("test_final.txt", "w")
-            file.close()
             return text
 
     @staticmethod
     def get_current_language():
-        file = open("app_settings.json", "r")
-        settings_str = file.read()
-        file.close()
-        settings_dict = json.loads(settings_str)
-        language = settings_dict["language"]
-        return language
+        try:
+            file = open("app_settings.json", "r", encoding="utf-8")
+            settings_str = file.read()
+            file.close()
+            settings_dict = json.loads(settings_str)
+            language = settings_dict["language"]
+            return language
+        except:
+            return "en"
 
     @staticmethod
     def set_current_language(language):
-        file = open("app_settings.json", "r")
-        settings_str = file.read()
-        file.close()
-        settings_dict = json.loads(settings_str)
-        settings_dict["language"] = language
-        new_settings_str = json.dumps(settings_dict)
-        file = open("app_settings.json", "w")
-        file.write(new_settings_str)
-        file.close()
+        try:
+            file = open("app_settings.json", "r")
+            settings_str = file.read()
+            file.close()
+            settings_dict = json.loads(settings_str)
+            settings_dict["language"] = language
+            new_settings_str = json.dumps(settings_dict)
+            file = open("app_settings.json", "w")
+            file.write(new_settings_str)
+            file.close()
+        except:
+            pass
 
     def get_warning(self):
         if self.test_language:

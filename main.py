@@ -4,7 +4,7 @@ Config.set('graphics', 'height', '560')
 Config.set('graphics', 'minimum_width', '790')
 Config.set('graphics', 'minimum_height', '300')
 import json
-from get_settings_app import get_settings
+from settings_app_manager import SettingsManager
 import os
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
@@ -17,6 +17,7 @@ from kivy.uix.widget import Widget
 from app_translator import AppTranslator
 import threading
 
+
 class LayoutWarningLanguage(BoxLayout):
     height_depend_language_aviable = NumericProperty(0)
     red = NumericProperty(0)
@@ -25,6 +26,7 @@ class LayoutWarningLanguage(BoxLayout):
     alpha = NumericProperty(0)
     text_warning = StringProperty("")
     icon_size = NumericProperty(0)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if AppTranslator.test_language:
@@ -109,6 +111,7 @@ class SplashScreen(Widget):
 class DevImageEditApp(App):
     def on_start(self):
         self.check_temp_folder()
+        SettingsManager().check_settings_file()
 
     def on_stop(self):
         self.check_temp_folder()
@@ -134,16 +137,8 @@ class DevImageEditApp(App):
                     os.rmdir(file_path)
         else:
             os.mkdir(".temp")
-    '''@staticmethod
-    def check_settings_file():
-        setting_file_exist = os.path.exists("app_settings.json")
-        base_settings = {"language": "fr",
-                         "color_selector": "images/colorselector.png",
-                         "color_part_background": "images/background_color_part.jpg",
-                         "cursor_color_type": "images/cursor_green_slider.png"}
-        if setting_file_exist:
-            dict_settings = get_settings()
-            for dict_settings in'''
+
+
 
 
 DevImageEditApp().run()
