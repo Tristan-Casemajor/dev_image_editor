@@ -1,4 +1,5 @@
 #:import Window kivy.core.window.Window
+#:import utils kivy.utils
 
 <WidgetFlagWithCheckBox>:
     image_source: self.image_source
@@ -22,8 +23,9 @@
         name: root.language_name
         width: dp(30)
         height: dp(30)
-        pos: root.pos[0], (root.pos[1]+root.height)-self.height
+        pos: root.pos[0]-dp(2), (root.pos[1]+root.height)-self.height+dp(2)
         on_active: root.set_language(self)
+
 
 <WidgetSelectorWithCheckBox>:
     image_source: self.image_source
@@ -47,8 +49,39 @@
         name: root.selector_name
         width: dp(30)
         height: dp(30)
-        pos: root.pos[0], (root.pos[1]+root.height)-self.height
+        pos: root.pos[0]-dp(3), (root.pos[1]+root.height)-self.height+dp(3)
         on_active: root.set_selector(self)
+
+
+<TabsColorWidget>:
+    TextInput:
+        id: input_color
+        pos: root.pos[0], root.center_y-self.height/2
+        size: dp(82), dp(30)
+        hint_text: "#FFFFFF"
+        multiline: False
+        cursor_color: 0, 0, 0, 1
+        text: root.hex_color_code
+        on_text: root.set_color(self.text)
+
+    DummyWidget:
+        id: dummy_widget_color_choice
+        pos: root.pos[0]+input_color.width, root.center_y-self.height/2
+        size: dp(10), 0
+
+    Widget:
+        canvas:
+            Color:
+                rgba: root.tabs_color
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        pos: dummy_widget_color_choice.pos[0]+dummy_widget_color_choice.width, root.center_y-self.height/2
+        size: dp(30), dp(30)
+
+
+
 
 
 
@@ -72,7 +105,7 @@
     halign: "left"
     pos_hint: {"center_y": 0.5}
 
-<DummyWidget@Widget>
+<DummyWidget@Widget>:
 
 
 <SettingBoxLatout@BoxLayout>:
@@ -111,6 +144,8 @@
         LabelSetting:
             text: root.text_label_language + " : "
         GridLayoutWidgetSettings:
+            size_hint: None, 1
+            width: dp(250)
             WidgetFlagWithCheckBox:
                 image_source: "images/flags/french_flag.jpg"
                 language_name: "fr"
@@ -132,12 +167,14 @@
             WidgetFlagWithCheckBox:
                 image_source: "images/flags/ukraine_flag.png"
                 language_name: "uk"
+
     SettingBoxLatout:
         LabelSetting:
             text: root.text_label_cursor + " : "
         GridLayoutWidgetSettings:
-            size_hint: None, 1
-            width: dp(210)
+            size_hint: None, None
+            size: dp(150), dp(60)
+            pos_hint: {"center_y": 0.5}
             WidgetSelectorWithCheckBox:
                 image_source: "images/colorselector.png"
                 selector_name: "images/colorselector.png"
@@ -145,6 +182,11 @@
                 image_source: "images/colorselector_2.png"
                 selector_name: "images/colorselector_2.png"
 
+    SettingBoxLatout:
+        LabelSetting:
+            text: root.text_label_color_tabs + " : "
+        TabsColorWidget:
+            pos_hint: {"center_y": 0.5}
 
     LayoutApplyChange:
 

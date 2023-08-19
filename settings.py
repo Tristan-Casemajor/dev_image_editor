@@ -2,13 +2,15 @@ import threading
 import json
 from kivy.graphics import Color, Rectangle
 from kivy.metrics import dp
-from kivy.properties import StringProperty, ObjectProperty, Clock, NumericProperty
+from kivy.properties import StringProperty, ObjectProperty, Clock, NumericProperty, ColorProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.uix.behaviors import CoverBehavior  # not use in this file but use in the kv file, do not remove this line
+from kivy.uix.textinput import TextInput
 from kivy.uix.widget import Widget
 from app_translator import AppTranslator
 from settings_app_manager import SettingsManager
+from kivy.utils import get_color_from_hex
 
 Builder.load_file("settings.kv")
 
@@ -83,6 +85,42 @@ class WidgetSelectorWithCheckBox(Widget):
         elif widget.name == current_selector and not widget.active:
             widget.active = True
 
+
+class TabsColorWidget(Widget):
+    tabs_color = ColorProperty((1, 1, 1, 0))
+    hex_color_code = StringProperty("")
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.init_color()
+
+    def init_color(self):
+        current_color = SettingsManager().get_settings().get("tabs_color")
+        if len(current_color[1::]) == 6:
+            self.hex_color_code = current_color
+            try:
+                self.tabs_color = get_color_from_hex(current_color)
+            except:
+                self.tabs_color = (0.1, 0.8, 0.15, 1)
+                self.hex_color_code = "#19cc26ff"
+        if len(current_color[1::]) == 8:
+            try:
+                self.tabs_color = get_color_from_hex(current_color[0:7])
+            except:
+                self.tabs_color = (0.1, 0.8, 0.15, 1)
+                self.hex_color_code = "#19cc26ff"
+            else:
+                self.hex_color_code = current_color[0:7]
+
+    def set_color(self, color):
+        if len(color[1::]) == 6:
+            try:
+                self.tabs_color = get_color_from_hex(color)
+            except:
+                pass
+            else:
+                SettingsManager().update_settings({"tabs_color": color})
+
+
 class LayoutApplyChange(BoxLayout):
     height_depend_change = NumericProperty(0)
     red = NumericProperty(0)
@@ -126,6 +164,7 @@ class LayoutApplyChange(BoxLayout):
 class SettingsLayout(BoxLayout):
     text_label_language = StringProperty("Select a language")
     text_label_cursor = StringProperty("Select a color selector")
+    text_label_color_tabs = StringProperty("tabs color")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -139,6 +178,7 @@ class SettingsLayout(BoxLayout):
         language = AppTranslator.get_current_language()
         self.text_label_language = AppTranslator().translate_text("Select a language", language)
         self.text_label_cursor = AppTranslator().translate_text("Select a color selector", language)
+        self.text_label_color_tabs = AppTranslator().translate_text("tabs color", language)
 
     def on_size(self, *args):
         self.overlay.size = self.size

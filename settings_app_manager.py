@@ -63,17 +63,13 @@ class SettingsManager:
         dict_settings = json.loads(dict_settings_str)
 
     def update_settings(self, new_setting):
-        print(new_setting)
         try:
-            print("passage1")
             setting_name = list(new_setting)
             if not isinstance(new_setting, dict):
                 print(1/0)
         except:
-            print("passage2")
             return
         else:
-            print("passage3")
             if setting_name[0] in list(self.base_settings):
                 current_settings = self.get_settings()
                 current_settings.update(new_setting)

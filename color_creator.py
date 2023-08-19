@@ -30,6 +30,7 @@ class ColorImage(Image):
     text_input_green255 = ObjectProperty(None)
     text_input_blue255 = ObjectProperty(None)
     image_color_selector = StringProperty("")
+    color_selector_size = NumericProperty(dp(19))
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -39,9 +40,14 @@ class ColorImage(Image):
             self.image_color_selector = color_selector_in_settings
         else:
             self.image_color_selector = color_selector_base
+
+        if color_selector_in_settings == "images/colorselector_2.png":
+            self.color_selector_size = dp(12)
+
         self.list_size = []
         with self.canvas.after:
-            self.selector = Rectangle(pos=self.pos, size=(dp(19), dp(19)), source=self.image_color_selector)
+            self.selector = Rectangle(pos=self.pos, size=(self.color_selector_size, self.color_selector_size),
+                                      source=self.image_color_selector)
 
     # This method is run when the user click or move on the ColorImage
     def image_color_selection(self, touch):

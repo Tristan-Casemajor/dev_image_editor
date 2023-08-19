@@ -3,16 +3,16 @@ Config.set('graphics', 'width', '880')
 Config.set('graphics', 'height', '560')
 Config.set('graphics', 'minimum_width', '790')
 Config.set('graphics', 'minimum_height', '300')
-import json
+from kivy.utils import get_color_from_hex
 from settings_app_manager import SettingsManager
 import os
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 from kivy.graphics import Rectangle, Color, Line
 from kivy.metrics import dp
-from kivy.properties import StringProperty, Clock, NumericProperty
+from kivy.properties import StringProperty, Clock, NumericProperty, ColorProperty
 from kivy.uix.image import Image
-from kivy.uix.tabbedpanel import TabbedPanel
+from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
 from kivy.uix.widget import Widget
 from app_translator import AppTranslator
 import threading
@@ -107,6 +107,24 @@ class SplashScreen(Widget):
         self.image_splashscreen.pos = (self.center_x-self.image_splashscreen.width/2, self.center_y-self.image_splashscreen.height/2)
         self.loading_anim.pos = self.center_x-self.loading_anim.width/2, self.center_y/20
 
+class TabbedPanelItemMainGui(TabbedPanelItem):
+    tabs_color = ColorProperty((0, 0, 0, 1))
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.set_color_tabs()
+
+    def set_color_tabs(self):
+        color = SettingsManager().get_settings().get("tabs_color")
+        if len(color[1::]) == 6:
+            try:
+                self.tabs_color = get_color_from_hex(color)
+            except:
+                self.tabs_color = (0.1, 0.8, 0.15, 1)
+        elif len(color[1::]) == 8:
+            try:
+                self.tabs_color = get_color_from_hex(color)
+            except:
+                self.tabs_color = (0.1, 0.8, 0.15, 1)
 
 class DevImageEditApp(App):
     def on_start(self):
