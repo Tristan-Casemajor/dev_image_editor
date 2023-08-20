@@ -1,5 +1,7 @@
 import threading
 import json
+
+from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
 from kivy.metrics import dp
 from kivy.properties import StringProperty, ObjectProperty, Clock, NumericProperty, ColorProperty
@@ -101,13 +103,13 @@ class TabsColorWidget(Widget):
                 self.tabs_color = get_color_from_hex(current_color)
             except:
                 self.tabs_color = (0.1, 0.8, 0.15, 1)
-                self.hex_color_code = "#19cc26ff"
+                self.hex_color_code = "#19cc26"
         if len(current_color[1::]) == 8:
             try:
                 self.tabs_color = get_color_from_hex(current_color[0:7])
             except:
                 self.tabs_color = (0.1, 0.8, 0.15, 1)
-                self.hex_color_code = "#19cc26ff"
+                self.hex_color_code = "#19cc26"
             else:
                 self.hex_color_code = current_color[0:7]
 
@@ -119,7 +121,19 @@ class TabsColorWidget(Widget):
                 pass
             else:
                 SettingsManager().update_settings({"tabs_color": color})
+        else:
+            try:
+                self.tabs_color = get_color_from_hex(color[0:7])
+            except:
+                pass
+            else:
+                SettingsManager().update_settings({"tabs_color": color[0:7]})
 
+    def reset_tabs_color(self):
+        if self.hex_color_code != "#19cc26":
+            self.tabs_color = (0.1, 0.8, 0.15, 1)
+            self.hex_color_code = "#19cc26"
+            SettingsManager().update_settings({"tabs_color": "#19cc26"})
 
 class LayoutApplyChange(BoxLayout):
     height_depend_change = NumericProperty(0)
@@ -165,6 +179,8 @@ class SettingsLayout(BoxLayout):
     text_label_language = StringProperty("Select a language")
     text_label_cursor = StringProperty("Select a color selector")
     text_label_color_tabs = StringProperty("tabs color")
+    reset_text = StringProperty("Reset")
+    slider_scroll = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -174,14 +190,22 @@ class SettingsLayout(BoxLayout):
         thread_lang = threading.Thread(target=self.language)
         thread_lang.start()
 
+    def set_slider_opacity(self):
+        if Window.height >= 815:
+            self.slider_scroll.opacity = 0
+        else:
+            self.slider_scroll.opacity = 1
+
     def language(self):
         language = AppTranslator.get_current_language()
         self.text_label_language = AppTranslator().translate_text("Select a language", language)
         self.text_label_cursor = AppTranslator().translate_text("Select a color selector", language)
         self.text_label_color_tabs = AppTranslator().translate_text("tabs color", language)
+        self.reset_text = AppTranslator().translate_text("Reset", language)
 
     def on_size(self, *args):
         self.overlay.size = self.size
+        self.set_slider_opacity()
 
     def res(self):
         self.App.get_running_app().restart()

@@ -107,6 +107,10 @@
 
 <DummyWidget@Widget>:
 
+<ButtonResetSetting@Button>:
+    background_normal: ''
+    background_color: 0.1, 0.7, 0.1, 1
+
 
 <SettingBoxLatout@BoxLayout>:
     size_hint: None, None
@@ -138,55 +142,97 @@
         text: root.text_reboot
 
 <SettingsLayout>:
+    slider_scroll: slider_scroll
     orientation: "vertical"
     spacing: dp(15)
-    SettingBoxLatout:
-        LabelSetting:
-            text: root.text_label_language + " : "
-        GridLayoutWidgetSettings:
+    BoxLayout:
+        size_hint: None, 1
+        width: dp(600)
+        pos_hint: {"center_x": 0.5}
+        ScrollView:
+            scroll_y: slider_scroll.value
+            do_scroll_y: True
+            do_scroll_x: False
+            BoxLayout:
+                #pos_hint: {"height": 1}
+                orientation: "vertical"
+                size_hint: 1, None
+                height: dp(400)
+                SettingBoxLatout:
+                    LabelSetting:
+                        text: root.text_label_language + " : "
+                    GridLayoutWidgetSettings:
+                        size_hint: None, 1
+                        width: dp(250)
+                        WidgetFlagWithCheckBox:
+                            image_source: "images/flags/french_flag.jpg"
+                            language_name: "fr"
+                        WidgetFlagWithCheckBox:
+                            image_source: "images/flags/german_flag.jpg"
+                            language_name: "de"
+                        WidgetFlagWithCheckBox:
+                            image_source: "images/flags/portugal_flag.jpg"
+                            language_name: "pt"
+                        WidgetFlagWithCheckBox:
+                            image_source: "images/flags/russia_flag.png"
+                            language_name: "ru"
+                        WidgetFlagWithCheckBox:
+                            image_source: "images/flags/spain_flag.jpg"
+                            language_name: "es"
+                        WidgetFlagWithCheckBox:
+                            image_source: "images/flags/english_flag.png"
+                            language_name: "en"
+                        WidgetFlagWithCheckBox:
+                            image_source: "images/flags/ukraine_flag.png"
+                            language_name: "uk"
+
+                SettingBoxLatout:
+                    LabelSetting:
+                        text: root.text_label_cursor + " : "
+                    GridLayoutWidgetSettings:
+                        size_hint: None, None
+                        size: dp(150), dp(60)
+                        pos_hint: {"center_y": 0.5}
+                        WidgetSelectorWithCheckBox:
+                            image_source: "images/colorselector.png"
+                            selector_name: "images/colorselector.png"
+                        WidgetSelectorWithCheckBox:
+                            image_source: "images/colorselector_2.png"
+                            selector_name: "images/colorselector_2.png"
+
+                SettingBoxLatout:
+                    LabelSetting:
+                        text: root.text_label_color_tabs + " : "
+                    TabsColorWidget:
+                        id: tabs_color_widget
+                        pos_hint: {"center_y": 0.5}
+                        size_hint: None, 1
+                        width: dp(120)
+                    DummyWidget:
+                        size_hint: None, None
+                        size: dp(18), 0
+                    ButtonResetSetting:
+                        on_press: tabs_color_widget.reset_tabs_color()
+                        size_hint: None, None
+                        size: dp(95), dp(30)
+                        pos_hint: {"center_y": 0.5}
+                        text: root.reset_text
+        BoxLayout:
+            orientation: "vertical"
             size_hint: None, 1
-            width: dp(250)
-            WidgetFlagWithCheckBox:
-                image_source: "images/flags/french_flag.jpg"
-                language_name: "fr"
-            WidgetFlagWithCheckBox:
-                image_source: "images/flags/german_flag.jpg"
-                language_name: "de"
-            WidgetFlagWithCheckBox:
-                image_source: "images/flags/portugal_flag.jpg"
-                language_name: "pt"
-            WidgetFlagWithCheckBox:
-                image_source: "images/flags/russia_flag.png"
-                language_name: "ru"
-            WidgetFlagWithCheckBox:
-                image_source: "images/flags/spain_flag.jpg"
-                language_name: "es"
-            WidgetFlagWithCheckBox:
-                image_source: "images/flags/english_flag.png"
-                language_name: "en"
-            WidgetFlagWithCheckBox:
-                image_source: "images/flags/ukraine_flag.png"
-                language_name: "uk"
-
-    SettingBoxLatout:
-        LabelSetting:
-            text: root.text_label_cursor + " : "
-        GridLayoutWidgetSettings:
-            size_hint: None, None
-            size: dp(150), dp(60)
-            pos_hint: {"center_y": 0.5}
-            WidgetSelectorWithCheckBox:
-                image_source: "images/colorselector.png"
-                selector_name: "images/colorselector.png"
-            WidgetSelectorWithCheckBox:
-                image_source: "images/colorselector_2.png"
-                selector_name: "images/colorselector_2.png"
-
-    SettingBoxLatout:
-        LabelSetting:
-            text: root.text_label_color_tabs + " : "
-        TabsColorWidget:
-            pos_hint: {"center_y": 0.5}
+            width: dp(8)
+            pos_hint: {"right": 1}
+            DummyWidget:   # We use Dummy widget because the cursor of the slider touch the list of TabbedPanelItems
+                size_hint: None, None
+                size: dp(8), dp(18)
+            Slider:
+                cursor_image: "images/cursor_scroll_slider.png"
+                cursor_size: dp(12), dp(60)
+                min: -0.6
+                max: 1
+                id: slider_scroll
+                value: self.max
+                orientation: "vertical"
 
     LayoutApplyChange:
 
