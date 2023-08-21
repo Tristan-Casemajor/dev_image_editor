@@ -1,5 +1,6 @@
 #:import color_creator color_creator
 #:import settings settings
+#:import image_editing image_editing
 #:import Window kivy.core.window.Window
 
 
@@ -43,6 +44,7 @@
 
     TabbedPanelItemMainGui:
         text: root.tab_images
+        LayoutImageEditing:
 
     TabbedPanelItemMainGui:
         text: root.tab_color

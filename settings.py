@@ -191,7 +191,7 @@ class SettingsLayout(BoxLayout):
         thread_lang.start()
 
     def set_slider_opacity(self):
-        if Window.height >= 815:
+        if Window.height >= 650:
             self.slider_scroll.opacity = 0
         else:
             self.slider_scroll.opacity = 1
