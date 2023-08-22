@@ -6,6 +6,7 @@ Config.set('graphics', 'minimum_height', '300')
 from kivy.utils import get_color_from_hex
 from settings_app_manager import SettingsManager
 import os
+from image_work_dir_manager import ImageWorkDirManager
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 from kivy.graphics import Rectangle, Color, Line
@@ -128,11 +129,13 @@ class TabbedPanelItemMainGui(TabbedPanelItem):
 
 class DevImageEditApp(App):
     def on_start(self):
-        self.check_temp_folder()
+        self.check_folder(".temp")
+        self.check_folder(ImageWorkDirManager.work_image_path)
         SettingsManager().check_settings_file()
 
     def on_stop(self):
-        self.check_temp_folder()
+        self.check_folder(".temp")
+        self.check_folder(ImageWorkDirManager.work_image_path)
 
     def build(self):
         self.icon = "images/logo_dev_icon_editor.jpg"
@@ -143,10 +146,9 @@ class DevImageEditApp(App):
     # content et the start and at the shutdown of the app
     # do not modify this function
     @staticmethod
-    def check_temp_folder():
-        temp_folder_exist = os.path.exists(".temp")
+    def check_folder(folder_path):
+        temp_folder_exist = os.path.exists(folder_path)
         if temp_folder_exist:
-            folder_path = ".temp"
             for filename in os.listdir(folder_path):
                 file_path = os.path.join(folder_path, filename)
                 if os.path.isfile(file_path):
@@ -154,7 +156,7 @@ class DevImageEditApp(App):
                 elif os.path.isdir(file_path):
                     os.rmdir(file_path)
         else:
-            os.mkdir(".temp")
+            os.mkdir(folder_path)
 
 
 

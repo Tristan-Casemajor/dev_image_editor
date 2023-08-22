@@ -1,13 +1,49 @@
 
 <WidgetImage>:
-    Button:
-        text: "Widget"
-        pos: root.pos
-        size: root.size
+    image_work: image_work
+    Image:
+        pos: root.center_x-self.width/2, root.center_y-self.height/2
+        id: image_work
+        keep_ratio: False
+        allow_stretch: True
+
+<DummyWidget@Widget>
+    size_hint: None, None
+
+<ButtonWithImageAtCenter>:
+    image_source: self.image_source
+    size_hint: None, None
+    size: dp(30), dp(30)
+    canvas:
+        Rectangle:
+            size: self.width-dp(8), self.height-dp(8)
+            pos: self.center_x-(self.width-dp(8))/2, self.center_y-(self.height-dp(8))/2
+            source: self.image_source
+
+
+<LayoutSelectImagePath>:
+    pos_hint: {"top": 0.97}
+    size_hint: 1, None
+    height: dp(30)
+    DummyWidget:
+        size: dp(4), dp(4)
+    Label:
+        text: "Image to edit : "
+        size_hint: None, None
+        size: self.texture_size
+        pos_hint: {"center_y": 0.5}
+    TextInput:
+        multiline: False
+        text: root.path_to_image
+    ButtonWithImageAtCenter:
+        on_press: root.select_image()
+        image_source: "images/folder_icon.png"
+
+
+
 
 <LayoutControlWidget>:
-    Button:
-        text: "Layout"
+    LayoutSelectImagePath:
 
 
 <LayoutImageEditing>:
