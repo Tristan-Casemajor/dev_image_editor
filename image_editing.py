@@ -13,11 +13,14 @@ from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL
 Builder.load_file("image_editing.kv")
 
 
+# This Layout allow the user to select an image file, the file is copy to the image_work_dir folder
 class LayoutSelectImagePath(BoxLayout):
     path_to_image = StringProperty("")
 
     def select_image(self):
-        # the file chooser return a list on selected files
+        # We use getcwd() and chdir() because plyer's filechooser change the work directory of the app
+        # so the good work directory is saved before the use of filechooser and it replace the wrong
+        # work directory after the use of the filechooser.
         app_work_dir = getcwd()
         path_image = filechooser.open_file(filters=[("Image", "*.jpg", "*.png", "*.ico", "*.bmp", "*.gif")])
         chdir(app_work_dir)
@@ -26,9 +29,13 @@ class LayoutSelectImagePath(BoxLayout):
             ImageWorkDirManager().copy_image_to_work_dir(self.path_to_image, "image_work_dir")
 
 
+# custom button with an image at the center, to use it ou must pass the path
+# to the image you want in the image_source property
 class ButtonWithImageAtCenter(Button):
     image_source = StringProperty("")
 
+
+# This widget contais the image selected by the user
 class WidgetImage(Widget):
     image_work = ObjectProperty(None)
 
@@ -47,6 +54,10 @@ class WidgetImage(Widget):
         widget_size = self.size
         image = Im.open(path.join(ImageWorkDirManager.work_image_path, image_name))
         image_base_size = image.size
+        # to display the image with the good size we calculate a coefficient (coef)
+        # coef = measurement_exceeded / widget_measurement_exceeded
+        # with the coef we divide the hight and the width of the image to keep the ratio and
+        # to have an image whi don't exceed the size of his container
         if image_base_size[0] <= widget_size[0] and image_base_size[1] <= widget_size[1]:
             self.image_work.size = image_base_size
 
@@ -67,6 +78,7 @@ class WidgetImage(Widget):
                 self.image_work.size = image_base_size[0] / coef2, image_base_size[1] / coef2
 
 
+# This Layout contains all the widget with wich the user can select options to modufy the image he selected
 class LayoutControlWidget(BoxLayout):
     text_select_image = StringProperty("Image to edit")
     title_filechooser = StringProperty("Choose an image")

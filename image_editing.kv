@@ -1,6 +1,8 @@
 #:import webbrowser webbrowser
 #: import utils kivy.utils
 
+
+# ------ custom widget classes ------ #
 <WidgetImage>:
     image_work: image_work
     Image:
@@ -28,15 +30,23 @@
     size: self.texture_size
     pos_hint: {"center_y": 0.5}
 
+<NoMultilineTextInput@TextInput>:
+    multiline: False
+    cursor_color: 0, 0, 0, 1
+
+<MultilineTextInput@TextInput>:
+    cursor_color: 0, 0, 0, 1
+
+
 <LayoutSelectImagePath>:
     title_filechooser: root.title_filechooser
     size_hint: 1, None
     height: dp(30)
     WidgetSpacing:
     LabelLayoutWidget:
-        text: root.parent.text_select_image + " : " #"Image to edit : "
+        text: root.parent.text_select_image + " : "
 
-    TextInput:
+    NoMultilineTextInput:
         multiline: False
         text: root.path_to_image
     WidgetSpacing:
@@ -53,13 +63,19 @@
     size_hint: None, None
     size: dp(20), dp(20)
     pos_hint: {"center_y": 0.5}
+# ------------------------------- #
+
 
 <LayoutControlWidget>:
     orientation: "vertical"
     spacing: dp(8)
 
+    # --- select the image file --- #
     LayoutSelectImagePath:
+    # ----------------------------- #
 
+    # --- remove the background --- #
+    # select if you want to remove the background
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
@@ -67,18 +83,22 @@
         AppCheckBox:
             id: bg_remove
 
+    # enter/get your api key (this layout don't appear if you don't want to remove the background)
     ControlLayout:
         opacity: 1 if bg_remove.state == "down" else 0
         height: dp(30) if bg_remove.state == "down" else 0
         WidgetSpacing:
         LabelLayoutWidget:
             text: "Api key : "
-        TextInput:
+        NoMultilineTextInput:
         WidgetSpacing:
         ButtonWithImageAtCenter:
             image_source: "images/info_icon.png"
             on_press: webbrowser.open("https://www.remove.bg/api")
+    # ---------------------------- #
 
+    # --- resize the image --- #
+    # select if you want to resize the image
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
@@ -86,6 +106,8 @@
         AppCheckBox:
             id: resize
 
+    # choose to keep the ratio of the image or not and give the new size (this layout don't appear if you don't
+    # want to resize the image)
     ControlLayout:
         spacing: dp(10)
         opacity: 1 if resize.state == "down" else 0
@@ -109,22 +131,26 @@
             WidgetSpacing:
             LabelLayoutWidget:
                 text: "Width : "
-            TextInput:
+            NoMultilineTextInput:
                 size_hint: None, 1
                 width: dp(75)
             WidgetSpacing:
             LabelLayoutWidget:
                 text: "Height : "
-            TextInput:
+            NoMultilineTextInput:
                 size_hint: None, 1
                 width: dp(75)
+    # -------------------------- #
 
+    # --- select if you want to crop the image --- #
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
             text: "Crop : "
         AppCheckBox:
+    # --------------------------------------------------- #
 
+    # --- select if you want to add text to your image and enter text --- #
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
@@ -137,7 +163,9 @@
         height: dp(50) if add_text.state == "down" else 0
         WidgetSpacing:
         TextInput:
+    # --------------------------------------------------- #
 
+    
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
@@ -183,7 +211,7 @@
         WidgetSpacing:
         LabelLayoutWidget:
             text: "Color : "
-        TextInput:
+        NoMultilineTextInput:
             size_hint: None, 1
             width: dp(90)
             id: color_code
@@ -191,21 +219,34 @@
         WidgetSpacing:
 
         Widget:
+            id: color_preview
             size_hint: None, 1
             width: self.height
             pos_hint: {"center_y": 0.5}
-            canvas:
+            canvas.after:
                 Color:
-                    rgba: utils.get_color_from_hex(color_code.text)
+                    rgba: utils.get_color_from_hex(color_code.text) if len(color_code.text) > 1 else (0, 0, 0, 1)
                 Rectangle:
                     pos: self.pos
                     size: self.size
+            Image:
+                allow_stretch: True
+                keep_ratio: False
+                source: "images/image_without_background.jpg"
+                size: color_preview.size
+                pos: color_preview.pos
 
+
+# ------ Main view of the image editing part ------ #
 <LayoutImageEditing>:
     ScrollView:
         do_scroll_y: True
         do_scroll_x: False
         LayoutControlWidget:
+            pos_hint: {"top": 1}
             size_hint: 1, None
-            height: dp(400)
+            height: dp(540)
+    WidgetSpacing:
+        size: dp(18), 0
     WidgetImage:
+# ------------------------------------------------- #
