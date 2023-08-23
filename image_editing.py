@@ -1,3 +1,5 @@
+import threading
+from app_translator import AppTranslator
 from kivy.lang import Builder
 from kivy.properties import StringProperty, ObjectProperty, Clock
 from kivy.uix.boxlayout import BoxLayout
@@ -6,18 +8,18 @@ from kivy.uix.widget import Widget
 from plyer import filechooser
 from image_work_dir_manager import ImageWorkDirManager
 from os import listdir, getcwd, chdir, path
-from PIL import Image as Im   # to avoid conflicts between Kivy Image and PIL image
+from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL image
 
 Builder.load_file("image_editing.kv")
 
 
 class LayoutSelectImagePath(BoxLayout):
     path_to_image = StringProperty("")
+
     def select_image(self):
         # the file chooser return a list on selected files
         app_work_dir = getcwd()
-        path_image = filechooser.open_file(title="choose an image",
-                                     filters=[("Image", "*.jpg", "*.png", "*.ico", "*.bmp")])
+        path_image = filechooser.open_file(filters=[("Image", "*.jpg", "*.png", "*.ico", "*.bmp", "*.gif")])
         chdir(app_work_dir)
         if len(path_image) > 0:
             self.path_to_image = path_image[0]
@@ -66,8 +68,20 @@ class WidgetImage(Widget):
 
 
 class LayoutControlWidget(BoxLayout):
-    pass
+    text_select_image = StringProperty("Image to edit")
+    title_filechooser = StringProperty("Choose an image")
+    text_remove_bg = StringProperty("Remove background")
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        thread_lang = threading.Thread(target=self.language)
+        thread_lang.start()
+
+    def language(self):
+        language = AppTranslator.get_current_language()
+        self.text_select_image = AppTranslator().translate_text("Image to edit", language)
+        self.title_filechooser = AppTranslator().translate_text("Choose an image", language)
+        self.text_remove_bg = AppTranslator().translate_text("Remove background", language)
 
 class LayoutImageEditing(BoxLayout):
     pass

@@ -1,3 +1,5 @@
+#:import webbrowser webbrowser
+#: import utils kivy.utils
 
 <WidgetImage>:
     image_work: image_work
@@ -7,8 +9,9 @@
         keep_ratio: False
         allow_stretch: True
 
-<DummyWidget@Widget>
+<WidgetSpacing@Widget>
     size_hint: None, None
+    size: dp(8), 0
 
 <ButtonWithImageAtCenter>:
     image_source: self.image_source
@@ -20,32 +23,189 @@
             pos: self.center_x-(self.width-dp(8))/2, self.center_y-(self.height-dp(8))/2
             source: self.image_source
 
+<LabelLayoutWidget@Label>:
+    size_hint: None, None
+    size: self.texture_size
+    pos_hint: {"center_y": 0.5}
 
 <LayoutSelectImagePath>:
-    pos_hint: {"top": 0.97}
+    title_filechooser: root.title_filechooser
     size_hint: 1, None
     height: dp(30)
-    DummyWidget:
-        size: dp(4), dp(4)
-    Label:
-        text: "Image to edit : "
-        size_hint: None, None
-        size: self.texture_size
-        pos_hint: {"center_y": 0.5}
+    WidgetSpacing:
+    LabelLayoutWidget:
+        text: root.parent.text_select_image + " : " #"Image to edit : "
+
     TextInput:
         multiline: False
         text: root.path_to_image
+    WidgetSpacing:
     ButtonWithImageAtCenter:
         on_press: root.select_image()
         image_source: "images/folder_icon.png"
 
 
+<ControlLayout@BoxLayout>:
+    size_hint: 1, None
+    height: dp(30)
 
+<AppCheckBox@CheckBox>:
+    size_hint: None, None
+    size: dp(20), dp(20)
+    pos_hint: {"center_y": 0.5}
 
 <LayoutControlWidget>:
+    orientation: "vertical"
+    spacing: dp(8)
+
     LayoutSelectImagePath:
 
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: root.text_remove_bg + " : "
+        AppCheckBox:
+            id: bg_remove
+
+    ControlLayout:
+        opacity: 1 if bg_remove.state == "down" else 0
+        height: dp(30) if bg_remove.state == "down" else 0
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "Api key : "
+        TextInput:
+        WidgetSpacing:
+        ButtonWithImageAtCenter:
+            image_source: "images/info_icon.png"
+            on_press: webbrowser.open("https://www.remove.bg/api")
+
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "Resize : "
+        AppCheckBox:
+            id: resize
+
+    ControlLayout:
+        spacing: dp(10)
+        opacity: 1 if resize.state == "down" else 0
+        height: dp(97) if resize.state == "down" else 0
+        orientation: "vertical"
+        BoxLayout:
+            WidgetSpacing:
+            LabelLayoutWidget:
+                text: "Keep ratio : "
+            AppCheckBox:
+                id: keep_ratio
+                state: "down" if do_not_keep_ratio.state == "normal" else "normal"
+        BoxLayout:
+            WidgetSpacing:
+            LabelLayoutWidget:
+                text: "Don't keep ratio : "
+            AppCheckBox:
+                id: do_not_keep_ratio
+                state: "down" if keep_ratio.state == "normal" else "normal"
+        BoxLayout:
+            WidgetSpacing:
+            LabelLayoutWidget:
+                text: "Width : "
+            TextInput:
+                size_hint: None, 1
+                width: dp(75)
+            WidgetSpacing:
+            LabelLayoutWidget:
+                text: "Height : "
+            TextInput:
+                size_hint: None, 1
+                width: dp(75)
+
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "Crop : "
+        AppCheckBox:
+
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "Add a text zone : "
+        AppCheckBox:
+            id: add_text
+
+    ControlLayout:
+        opacity: 1 if add_text.state == "down" else 0
+        height: dp(50) if add_text.state == "down" else 0
+        WidgetSpacing:
+        TextInput:
+
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "Modify output format (png by default) : "
+        AppCheckBox:
+            id: image_format
+
+    ControlLayout:
+        opacity: 1 if image_format.state == "down" else 0
+        height: dp(30) if image_format.state == "down" else 0
+        #:set spacing dp(12)
+        WidgetSpacing:
+            width: spacing
+        LabelLayoutWidget:
+            text: "jpg : "
+        AppCheckBox:
+        WidgetSpacing:
+            width: spacing
+        LabelLayoutWidget:
+            text: "bmp : "
+        AppCheckBox:
+        WidgetSpacing:
+            width: spacing
+        LabelLayoutWidget:
+            text: "gif : "
+        AppCheckBox:
+        WidgetSpacing:
+            width: spacing
+        LabelLayoutWidget:
+            text: "ico : "
+        AppCheckBox:
+
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "Add color overlay : "
+        AppCheckBox:
+            id: overlay
+
+    ControlLayout:
+        opacity: 1 if overlay.state == "down" else 0
+        height: dp(30) if overlay.state == "down" else 0
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "Color : "
+        TextInput:
+            size_hint: None, 1
+            width: dp(90)
+            id: color_code
+            text: "#00000000"
+        WidgetSpacing:
+
+        Widget:
+            size_hint: None, 1
+            width: self.height
+            pos_hint: {"center_y": 0.5}
+            canvas:
+                Color:
+                    rgba: utils.get_color_from_hex(color_code.text)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
 
 <LayoutImageEditing>:
-    LayoutControlWidget:
+    ScrollView:
+        do_scroll_y: True
+        do_scroll_x: False
+        LayoutControlWidget:
+            size_hint: 1, None
+            height: dp(400)
     WidgetImage:
