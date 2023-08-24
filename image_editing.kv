@@ -37,26 +37,43 @@
 <MultilineTextInput@TextInput>:
     cursor_color: 0, 0, 0, 1
 
+<ProceedButton@Button>:
+    font_name: "fonts/arial-unicode-ms.ttf"
+    markup: True
+    text: "[size=40]Proceed[/size] [size=40]\u25B6[/size]"
+    size_hint: None, None
+    height: dp(45)
+    width: dp(260)
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    background_normal: ''
+    background_down: ''
+    background_color: (0.133, 0.867, 0.282, 1) if self.state == "normal" else (0.002, 0.654, 0.07, 1)
 
 <LayoutSelectImagePath>:
-    size_hint: 1, None
-    height: dp(30)
+    #size_hint: 1, 0.1
+    pos_hint: {"top": 1}
+    #height: dp(30)
     WidgetSpacing:
     LabelLayoutWidget:
         text: root.parent.text_select_image + " : "
 
     NoMultilineTextInput:
+        size_hint: 1, None
+        pos_hint: {"center_y": 0.5}
+        height: dp(30)
         multiline: False
         text: root.path_to_image
     WidgetSpacing:
     ButtonWithImageAtCenter:
         on_press: root.select_image()
+        pos_hint: {"center_y": 0.5}
         image_source: "images/folder_icon.png"
 
 
 <ControlLayout@BoxLayout>:
-    size_hint: 1, None
-    height: dp(30)
+    #size_hint: 1, 0.1
+    pos_hint: {"top": 1}
+    # height: dp(30)
 
 <AppCheckBox@CheckBox>:
     size_hint: None, None
@@ -65,9 +82,11 @@
 # ------------------------------- #
 
 
+
+# ------ this BoxLayout contains all widgets with which you can apply modifications to an image ------ #
 <LayoutControlWidget>:
     orientation: "vertical"
-    spacing: dp(8)
+    # spacing: dp(8)
 
     # --- select the image file --- #
     LayoutSelectImagePath:
@@ -84,11 +103,12 @@
 
     # enter/get your api key (this layout don't appear if you don't want to remove the background)
     ControlLayout:
+        size_hint: 1, None
         opacity: 1 if bg_remove.state == "down" else 0
         height: dp(30) if bg_remove.state == "down" else 0
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "Api key : "
+            text: root.text_api_key_remove_bg + " : "
         NoMultilineTextInput:
         WidgetSpacing:
         ButtonWithImageAtCenter:
@@ -101,13 +121,14 @@
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "Resize : "
+            text: root.text_resize + " : "
         AppCheckBox:
             id: resize
 
     # choose to keep the ratio of the image or not and give the new size (this layout don't appear if you don't
     # want to resize the image)
     ControlLayout:
+        size_hint: 1, None
         spacing: dp(10)
         opacity: 1 if resize.state == "down" else 0
         height: dp(97) if resize.state == "down" else 0
@@ -115,27 +136,27 @@
         BoxLayout:
             WidgetSpacing:
             LabelLayoutWidget:
-                text: "Keep ratio : "
+                text: root.text_resize_keep_ratio + " : "
             AppCheckBox:
                 id: keep_ratio
                 state: "down" if do_not_keep_ratio.state == "normal" else "normal"
         BoxLayout:
             WidgetSpacing:
             LabelLayoutWidget:
-                text: "Don't keep ratio : "
+                text: root.text_resize_do_not_keep_ratio + " : "
             AppCheckBox:
                 id: do_not_keep_ratio
                 state: "down" if keep_ratio.state == "normal" else "normal"
         BoxLayout:
             WidgetSpacing:
             LabelLayoutWidget:
-                text: "Width : "
+                text: root.text_resize_width + " : "
             NoMultilineTextInput:
                 size_hint: None, 1
                 width: dp(75)
             WidgetSpacing:
             LabelLayoutWidget:
-                text: "Height : "
+                text: root.text_resize_height + " : "
             NoMultilineTextInput:
                 size_hint: None, 1
                 width: dp(75)
@@ -145,7 +166,7 @@
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "Crop : "
+            text: root.text_crop + " : "
         AppCheckBox:
     # --------------------------------------------------- #
 
@@ -153,16 +174,40 @@
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "Add a text zone : "
+            text: root.add_text + " : "
         AppCheckBox:
             id: add_text
 
     ControlLayout:
+        size_hint: 1, None
         opacity: 1 if add_text.state == "down" else 0
         height: dp(50) if add_text.state == "down" else 0
         WidgetSpacing:
         MultilineTextInput:
     # --------------------------------------------------- #
+
+    # --- select if you want to rotate the image --- #
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: root.rotate_image  #"rotate the image : "
+        AppCheckBox:
+            id: rotate
+
+    ControlLayout:
+        size_hint: 1, None
+        opacity: 1 if rotate.state == "down" else 0
+        height: dp(30) if rotate.state == "down" else 0
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "angle : "
+        MultilineTextInput:
+            size_hint: None, 1
+            width: dp(60)
+    # --------------------------------------------- #
+
+
+
 
     # --- choose the output format --- #
     ControlLayout:
@@ -173,6 +218,7 @@
             id: image_format
 
     ControlLayout:
+        size_hint: 1, None
         opacity: 1 if image_format.state == "down" else 0
         height: dp(30) if image_format.state == "down" else 0
         #:set spacing dp(12)
@@ -207,6 +253,7 @@
             id: overlay
 
     ControlLayout:
+        size_hint: 1, None
         opacity: 1 if overlay.state == "down" else 0
         height: dp(30) if overlay.state == "down" else 0
         WidgetSpacing:
@@ -237,6 +284,63 @@
                 pos: color_preview.pos
     # -------------------------------------------- #
 
+    # --- give the name of the new image --- #
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "Name of the new image : "
+        NoMultilineTextInput:
+            size_hint: None, None
+            pos_hint: {"center_y": 0.5}
+            width: dp(110)
+            height: dp(30)
+    # -------------------------------------- #
+
+    # --- select the folder in which you want to stock the new image --- #
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "save image as : "
+        NoMultilineTextInput:
+            size_hint: 1, None
+            pos_hint: {"center_y": 0.5}
+            height: dp(30)
+        WidgetSpacing:
+        ButtonWithImageAtCenter:
+            image_source: "images/folder_icon.png"
+            pos_hint: {"center_y": 0.5}
+    # ------------------------------------------------------------------ #
+
+    # --- add the image to an .exe file --- #
+    ControlLayout:
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "use image as .exe file icon : "
+        AppCheckBox:
+            id: exe_icon
+
+    ControlLayout:
+        size_hint: 1, None
+        opacity: 1 if exe_icon.state == "down" else 0
+        height: dp(30) if exe_icon.state == "down" else 0
+        WidgetSpacing:
+        LabelLayoutWidget:
+            text: "Path to exe file : "
+        NoMultilineTextInput:
+        WidgetSpacing:
+        ButtonWithImageAtCenter:
+            image_source: "images/folder_icon.png"
+    # ------------------------------------- #
+
+    # --- button tu apply modifications to the image --- #
+    WidgetSpacing:
+        size: 0, dp(15)
+    ProceedButton:
+    WidgetSpacing:
+        size: 0, dp(10)
+    # -------------------------------------------------- #
+# ------------------------------------------------------------------------ #
+
 
 # ------ Main view of the image editing part ------ #
 <LayoutImageEditing>:
@@ -245,7 +349,7 @@
         do_scroll_x: False
         LayoutControlWidget:
             size_hint: 1, None
-            height: dp(540)
+            height: dp(820)
     WidgetSpacing:
         size: dp(18), 0
     WidgetImage:

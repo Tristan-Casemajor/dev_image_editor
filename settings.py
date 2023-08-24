@@ -63,7 +63,6 @@ class WidgetSelectorWithCheckBox(Widget):
 
     def init_selector(self, dt):
         current_selector = SettingsManager().get_settings().get("color_selector")
-        print(current_selector)
         for i in self.list_check_box:
             if i.name == current_selector:
                 i.active = True
@@ -206,3 +205,5 @@ class SettingsLayout(BoxLayout):
 
     def res(self):
         self.App.get_running_app().restart()
+
+

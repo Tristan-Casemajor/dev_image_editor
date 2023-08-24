@@ -82,6 +82,15 @@ class WidgetImage(Widget):
 class LayoutControlWidget(BoxLayout):
     text_select_image = StringProperty("Image to edit")
     text_remove_bg = StringProperty("Remove background")
+    text_api_key_remove_bg = StringProperty("Api key")
+    text_resize = StringProperty("Resize")
+    text_resize_keep_ratio = StringProperty("Keep ratio")
+    text_resize_do_not_keep_ratio = StringProperty("Do not keep ratio")
+    text_resize_width = StringProperty("Width")
+    text_resize_height = StringProperty("Height")
+    text_crop = StringProperty("Crop")
+    add_text = StringProperty("Add a text area")
+    rotate_image = StringProperty("Rotate image")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -92,7 +101,15 @@ class LayoutControlWidget(BoxLayout):
         language = AppTranslator.get_current_language()
         self.text_select_image = AppTranslator().translate_text(self.text_select_image, language)
         self.text_remove_bg = AppTranslator().translate_text(self.text_remove_bg, language)
-
+        self.text_api_key_remove_bg = AppTranslator().translate_text(self.text_api_key_remove_bg, language)
+        self.text_resize = AppTranslator().translate_text(self.text_resize, language)
+        self.text_resize_keep_ratio = AppTranslator().translate_text(self.text_resize_keep_ratio, language)
+        self.text_resize_do_not_keep_ratio = AppTranslator().translate_text(self.text_resize_do_not_keep_ratio, language)
+        self.text_resize_width = AppTranslator().translate_text(self.text_resize_width, language)
+        self.text_resize_height = AppTranslator().translate_text(self.text_resize_height, language)
+        self.text_crop = AppTranslator().translate_text(self.text_crop, language)
+        self.add_text = AppTranslator().translate_text(self.add_text, language)
+        self.rotate_image = AppTranslator().translate_text(self.rotate_image, language)
 
 class LayoutImageEditing(BoxLayout):
     pass
