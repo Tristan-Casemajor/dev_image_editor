@@ -149,24 +149,26 @@ class ColorLayout(BoxLayout):
     # translate english GUI in the language choose by the user in the settings
     def language(self):
         language = AppTranslator.get_current_language()
-        self.text_hex_color = AppTranslator().translate_text("Hexadecimal", language)
-        self.slider_red_title = AppTranslator().translate_text("Red", language)
-        self.slider_green_title = AppTranslator().translate_text("Green", language)
-        self.slider_blue_title = AppTranslator().translate_text("Blue", language)
-        self.slider_alpha_title = AppTranslator().translate_text("Transparency", language)
-        self.slider_brightness_title = AppTranslator().translate_text("Brightness", language)
-        self.text_copy_button_when_text_copied = AppTranslator().translate_text("Copied", language)
-        self.text_copy_button_base = AppTranslator().translate_text("Copy", language)
+        self.text_hex_color = AppTranslator().translate_text(self.text_hex_color, language)
+        self.slider_red_title = AppTranslator().translate_text(self.slider_red_title, language)
+        self.slider_green_title = AppTranslator().translate_text(self.slider_green_title, language)
+        self.slider_blue_title = AppTranslator().translate_text(self.slider_blue_title, language)
+        self.text_copy_button_when_text_copied = AppTranslator().translate_text(self.text_copy_button_when_text_copied, language)
+        self.text_copy_button_base = AppTranslator().translate_text(self.text_copy_button_base, language)
         self.text_copy_button_hex = self.text_copy_button_base
         self.text_copy_button_rgba255 = self.text_copy_button_base
         self.text_copy_button_rgba1 = self.text_copy_button_base
 
         if language == "ru":
             self.text_rgb_color = "РГБА"
+            self.slider_brightness_title = "Яркость"
+            self.slider_alpha_title = "Прозрачность"
         elif language == "fr":
             self.text_rgb_color = "RVBA"
         else:
             self.text_rgb_color = AppTranslator().translate_text("RGBA", language)
+            self.slider_brightness_title = AppTranslator().translate_text(self.slider_brightness_title, language)
+            self.slider_alpha_title = AppTranslator().translate_text(self.slider_alpha_title, language)
 
     @staticmethod
     def test_value(value):

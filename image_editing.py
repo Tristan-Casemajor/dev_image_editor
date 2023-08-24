@@ -81,7 +81,6 @@ class WidgetImage(Widget):
 # This Layout contains all the widget with wich the user can select options to modufy the image he selected
 class LayoutControlWidget(BoxLayout):
     text_select_image = StringProperty("Image to edit")
-    title_filechooser = StringProperty("Choose an image")
     text_remove_bg = StringProperty("Remove background")
 
     def __init__(self, **kwargs):
@@ -91,10 +90,9 @@ class LayoutControlWidget(BoxLayout):
 
     def language(self):
         language = AppTranslator.get_current_language()
-        self.text_select_image = AppTranslator().translate_text("Image to edit", language)
-        self.title_filechooser = AppTranslator().translate_text("Choose an image", language)
-        self.text_remove_bg = AppTranslator().translate_text("Remove background", language)
+        self.text_select_image = AppTranslator().translate_text(self.text_select_image, language)
+        self.text_remove_bg = AppTranslator().translate_text(self.text_remove_bg, language)
+
 
 class LayoutImageEditing(BoxLayout):
     pass
-

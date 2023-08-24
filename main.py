@@ -9,7 +9,7 @@ import os
 from image_work_dir_manager import ImageWorkDirManager
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
-from kivy.graphics import Rectangle, Color, Line
+from kivy.graphics import Rectangle
 from kivy.metrics import dp
 from kivy.properties import StringProperty, Clock, NumericProperty, ColorProperty
 from kivy.uix.image import Image
@@ -52,7 +52,6 @@ class LayoutWarningLanguage(BoxLayout):
             self.icon_size = 0
 
 
-
 class Gui(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -88,9 +87,9 @@ class MainTabbedPanel(TabbedPanel):
 
     def language(self):
         language = AppTranslator.get_current_language()
-        self.tab_images = AppTranslator().translate_text("Image Editing", language)
-        self.tab_color = AppTranslator().translate_text("Color Creation", language)
-        self.tab_settings = AppTranslator().translate_text("Application Settings", language)
+        self.tab_images = AppTranslator().translate_text(self.tab_images, language)
+        self.tab_color = AppTranslator().translate_text(self.tab_color, language)
+        self.tab_settings = AppTranslator().translate_text(self.tab_settings, language)
 
 
 class SplashScreen(Widget):
@@ -108,8 +107,10 @@ class SplashScreen(Widget):
         self.image_splashscreen.pos = (self.center_x-self.image_splashscreen.width/2, self.center_y-self.image_splashscreen.height/2)
         self.loading_anim.pos = self.center_x-self.loading_anim.width/2, self.center_y/20
 
+
 class TabbedPanelItemMainGui(TabbedPanelItem):
     tabs_color = ColorProperty((0, 0, 0, 1))
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.set_color_tabs()
@@ -126,6 +127,7 @@ class TabbedPanelItemMainGui(TabbedPanelItem):
                 self.tabs_color = get_color_from_hex(color)
             except:
                 self.tabs_color = (0.1, 0.8, 0.15, 1)
+
 
 class DevImageEditApp(App):
     def on_start(self):
@@ -157,8 +159,6 @@ class DevImageEditApp(App):
                     os.rmdir(file_path)
         else:
             os.mkdir(folder_path)
-
-
 
 
 DevImageEditApp().run()

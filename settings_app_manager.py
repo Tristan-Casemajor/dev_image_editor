@@ -14,7 +14,6 @@ class SettingsManager:
         try:
             self.__get_an_error()
         except:
-            print("passage4")
             self.reset_settings()
         else:
             setting_file_exist = os.path.exists("app_settings.json")
@@ -30,13 +29,10 @@ class SettingsManager:
                     if all(list_test):
                         return
                     else:
-                        print("passage1")
                         self.reset_settings()
                 else:
-                    print("passage2")
                     self.reset_settings()
             else:
-                print("passage3")
                 self.reset_settings()
 
     def reset_settings(self):
@@ -56,7 +52,8 @@ class SettingsManager:
 
         return dict_settings
 
-    def __get_an_error(self):
+    @staticmethod
+    def __get_an_error():
         file = open("app_settings.json", "r", encoding="utf-8")
         dict_settings_str = file.read()
         file.close()
