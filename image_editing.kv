@@ -1,5 +1,5 @@
 #:import webbrowser webbrowser
-#: import utils kivy.utils
+#:import utils kivy.utils
 
 
 # ------ custom widget classes ------ #
@@ -39,7 +39,6 @@
 
 
 <LayoutSelectImagePath>:
-    title_filechooser: root.title_filechooser
     size_hint: 1, None
     height: dp(30)
     WidgetSpacing:
@@ -162,10 +161,10 @@
         opacity: 1 if add_text.state == "down" else 0
         height: dp(50) if add_text.state == "down" else 0
         WidgetSpacing:
-        TextInput:
+        MultilineTextInput:
     # --------------------------------------------------- #
 
-    
+    # --- choose the output format --- #
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
@@ -197,7 +196,9 @@
         LabelLayoutWidget:
             text: "ico : "
         AppCheckBox:
+    # -------------------------------- #
 
+    # --- select if you want apply a color overlay --- #
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
@@ -217,7 +218,6 @@
             id: color_code
             text: "#00000000"
         WidgetSpacing:
-
         Widget:
             id: color_preview
             size_hint: None, 1
@@ -235,6 +235,7 @@
                 source: "images/image_without_background.jpg"
                 size: color_preview.size
                 pos: color_preview.pos
+    # -------------------------------------------- #
 
 
 # ------ Main view of the image editing part ------ #
@@ -243,7 +244,6 @@
         do_scroll_y: True
         do_scroll_x: False
         LayoutControlWidget:
-            pos_hint: {"top": 1}
             size_hint: 1, None
             height: dp(540)
     WidgetSpacing:
