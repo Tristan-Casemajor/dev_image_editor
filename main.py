@@ -30,16 +30,18 @@ class LayoutWarningLanguage(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if AppTranslator.test_language:
-            pass
-        else:
-            self.height_depend_language_aviable = dp(25)
-            self.red = 0.92
-            self.green = 0.66
-            self.blue = 0
-            self.alpha = 1
-            self.text_warning = AppTranslator().get_warning()
-            self.icon_size = dp(20)
+        current_language = AppTranslator().get_current_language()
+        if current_language != "en":
+            if AppTranslator.test_language:
+                pass
+            else:
+                self.height_depend_language_aviable = dp(25)
+                self.red = 0.92
+                self.green = 0.66
+                self.blue = 0
+                self.alpha = 1
+                self.text_warning = AppTranslator().get_warning()
+                self.icon_size = dp(20)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -63,7 +65,7 @@ class Gui(Widget):
         self.warning = LayoutWarningLanguage()
         self.warning.opacity = 0
         self.add_widget(self.warning)
-        Clock.schedule_once(self.remove_splashscreen, 6)
+        Clock.schedule_once(self.remove_splashscreen, 8)
 
     def on_size(self, *args):
         self.splashscreen.size = self.size

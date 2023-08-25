@@ -107,8 +107,8 @@ class ColorLayout(BoxLayout):
     slider_red_title = StringProperty("Red")
     slider_green_title = StringProperty("Green")
     slider_blue_title = StringProperty("Blue")
-    slider_alpha_title = StringProperty("transparency")
-    slider_brightness_title = StringProperty("brightness")
+    slider_alpha_title = StringProperty("Transparency")
+    slider_brightness_title = StringProperty("Brightness")
     red_slider = ObjectProperty(None)
     green_slider = ObjectProperty(None)
     blue_slider = ObjectProperty(None)
@@ -124,6 +124,7 @@ class ColorLayout(BoxLayout):
     text_copy_button_base = "copy"
     slider_scroll = ObjectProperty(None)
     scroll_view = ObjectProperty(None)
+    size_widget_color_container = NumericProperty(dp(500))
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -141,10 +142,14 @@ class ColorLayout(BoxLayout):
         else:
             self.slider_scroll.opacity = 1
 
-    #update slider scroll opacity and overlay size
+    #update slider scroll opacity, overlay size and set a bigger height for the layout wich contain widget color
     def on_size(self, *args):
         self.set_slider_opacity()
         self.overlay.size = self.size
+        if Window.height >= 920:
+            self.size_widget_color_container = dp(600)
+        else:
+            self.size_widget_color_container = dp(500)
 
     # translate english GUI in the language choose by the user in the settings
     def language(self):
@@ -165,6 +170,8 @@ class ColorLayout(BoxLayout):
             self.slider_alpha_title = "Прозрачность"
         elif language == "fr":
             self.text_rgb_color = "RVBA"
+            self.slider_brightness_title = AppTranslator().translate_text(self.slider_brightness_title, language)
+            self.slider_alpha_title = AppTranslator().translate_text(self.slider_alpha_title, language)
         else:
             self.text_rgb_color = AppTranslator().translate_text("RGBA", language)
             self.slider_brightness_title = AppTranslator().translate_text(self.slider_brightness_title, language)

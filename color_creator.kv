@@ -65,6 +65,7 @@
         orientation: "horizontal"
         ScrollView:
             id: scroll_view
+            bar_width: 0
             do_scroll_y: True
             do_scroll_x: False
             scroll_y: slider_scroll.value
@@ -73,8 +74,8 @@
                 orientation: "vertical"
                 padding: dp(20)
                 size_hint: 1, None
-                size_hint_max_y: root.height
-                height: dp(500)
+                #size_hint_max_y: root.height
+                height: root.size_widget_color_container #dp(500) #500
                 WidgetColorImage:
                     id: test
                     pos_hint: {"top": 1}

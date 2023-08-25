@@ -1,13 +1,14 @@
 import threading
 from app_translator import AppTranslator
 from kivy.lang import Builder
-from kivy.properties import StringProperty, ObjectProperty, Clock
+from kivy.properties import StringProperty, ObjectProperty, Clock, ColorProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from plyer import filechooser
 from image_work_dir_manager import ImageWorkDirManager
 from os import listdir, getcwd, chdir, path
+from kivy.utils import get_color_from_hex
 from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL image
 
 Builder.load_file("image_editing.kv")
@@ -33,6 +34,7 @@ class LayoutSelectImagePath(BoxLayout):
 # to the image you want in the image_source property
 class ButtonWithImageAtCenter(Button):
     image_source = StringProperty("")
+
 
 
 # This widget contais the image selected by the user
@@ -88,9 +90,21 @@ class LayoutControlWidget(BoxLayout):
     text_resize_do_not_keep_ratio = StringProperty("Do not keep ratio")
     text_resize_width = StringProperty("Width")
     text_resize_height = StringProperty("Height")
-    text_crop = StringProperty("Crop")
+    text_crop = StringProperty("Reframe")
     add_text = StringProperty("Add a text area")
     rotate_image = StringProperty("Rotate image")
+    text_rotate_angle = StringProperty("Angle")
+    text_output_format = StringProperty("Modify output format (png by default)")
+    text_overlay = StringProperty("Add color overlay")
+    text_color_overlay = StringProperty("Color")
+    new_name_of_image = StringProperty("Name of the new image")
+    save_image_as = StringProperty("Save the image as")
+    text_exe_file_icon = StringProperty("Add the image as an icon to an .exe file")
+    text_path_to_exe_file = StringProperty("Path to the exe file")
+    text_proceed_button = StringProperty("Proceed")
+    color_preview = ColorProperty((0, 0, 0, 0.5))
+    path_to_folder = StringProperty("")
+    path_to_exe_file = StringProperty("")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -102,14 +116,54 @@ class LayoutControlWidget(BoxLayout):
         self.text_select_image = AppTranslator().translate_text(self.text_select_image, language)
         self.text_remove_bg = AppTranslator().translate_text(self.text_remove_bg, language)
         self.text_api_key_remove_bg = AppTranslator().translate_text(self.text_api_key_remove_bg, language)
-        self.text_resize = AppTranslator().translate_text(self.text_resize, language)
         self.text_resize_keep_ratio = AppTranslator().translate_text(self.text_resize_keep_ratio, language)
         self.text_resize_do_not_keep_ratio = AppTranslator().translate_text(self.text_resize_do_not_keep_ratio, language)
         self.text_resize_width = AppTranslator().translate_text(self.text_resize_width, language)
         self.text_resize_height = AppTranslator().translate_text(self.text_resize_height, language)
-        self.text_crop = AppTranslator().translate_text(self.text_crop, language)
         self.add_text = AppTranslator().translate_text(self.add_text, language)
+        self.text_crop = AppTranslator().translate_text(self.text_crop, language)
         self.rotate_image = AppTranslator().translate_text(self.rotate_image, language)
+        self.text_rotate_angle = AppTranslator().translate_text(self.text_rotate_angle, language)
+        self.text_output_format = AppTranslator().translate_text(self.text_output_format, language)
+        self.text_overlay = AppTranslator().translate_text(self.text_overlay, language)
+        self.text_color_overlay = AppTranslator().translate_text(self.text_color_overlay, language)
+        self.new_name_of_image = AppTranslator().translate_text(self.new_name_of_image, language)
+        self.save_image_as = AppTranslator().translate_text(self.save_image_as, language)
+        self.text_exe_file_icon = AppTranslator().translate_text(self.text_exe_file_icon, language)
+        self.text_path_to_exe_file = AppTranslator().translate_text(self.text_path_to_exe_file, language)
+
+        if language == "fr":
+            self.text_resize = "Redimensionner"
+            self.text_proceed_button = "Lancer"
+        elif language == "uk":
+            self.text_resize = AppTranslator().translate_text(self.text_resize, language)
+            self.text_proceed_button = AppTranslator().translate_text(self.text_proceed_button, language)
+        else:
+            self.text_resize = AppTranslator().translate_text(self.text_resize, language)
+            self.text_proceed_button = AppTranslator().translate_text(self.text_proceed_button, language)
+
+
+    def set_color_preview(self, color):
+        try:
+            self.color_preview = get_color_from_hex(color)
+        except:
+            pass
+
+    def select_folder_new_picture(self):
+        app_work_dir = getcwd()
+        path_folder = filechooser.choose_dir()
+        chdir(app_work_dir)
+        print(path_folder)
+        if len(path_folder) > 0:
+            self.path_to_folder = path_folder[0]
+
+    def select_path_to_exe_file(self):
+        app_work_dir = getcwd()
+        path_exe = filechooser.open_file(filters=[("exe file", "*.exe", "*.dll")])
+        chdir(app_work_dir)
+        if len(path_exe) > 0:
+            self.path_to_exe_file = path_exe[0]
+
 
 class LayoutImageEditing(BoxLayout):
     pass

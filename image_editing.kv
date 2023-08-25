@@ -1,5 +1,4 @@
 #:import webbrowser webbrowser
-#:import utils kivy.utils
 
 
 # ------ custom widget classes ------ #
@@ -38,12 +37,11 @@
     cursor_color: 0, 0, 0, 1
 
 <ProceedButton@Button>:
-    font_name: "fonts/arial-unicode-ms.ttf"
-    markup: True
-    text: "[size=40]Proceed[/size] [size=40]\u25B6[/size]"
+    font_name: "fonts/arial_unicode_ms.ttf"
+    font_size: dp(30)
     size_hint: None, None
     height: dp(45)
-    width: dp(260)
+    width: dp(200)
     pos_hint: {"center_x": 0.5, "center_y": 0.5}
     background_normal: ''
     background_down: ''
@@ -190,7 +188,7 @@
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: root.rotate_image  #"rotate the image : "
+            text: root.rotate_image + " : "
         AppCheckBox:
             id: rotate
 
@@ -200,7 +198,7 @@
         height: dp(30) if rotate.state == "down" else 0
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "angle : "
+            text: root.text_rotate_angle + " : "
         MultilineTextInput:
             size_hint: None, 1
             width: dp(60)
@@ -213,7 +211,7 @@
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "Modify output format (png by default) : "
+            text: root.text_output_format + " : "
         AppCheckBox:
             id: image_format
 
@@ -248,7 +246,7 @@
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "Add color overlay : "
+            text: root.text_overlay + " : "
         AppCheckBox:
             id: overlay
 
@@ -258,12 +256,13 @@
         height: dp(30) if overlay.state == "down" else 0
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "Color : "
+            text: root.text_color_overlay + " : "    #"Color : "
         NoMultilineTextInput:
             size_hint: None, 1
             width: dp(90)
             id: color_code
-            text: "#00000000"
+            text: "#000000C0"
+            on_text: root.set_color_preview(self.text)
         WidgetSpacing:
         Widget:
             id: color_preview
@@ -272,14 +271,14 @@
             pos_hint: {"center_y": 0.5}
             canvas.after:
                 Color:
-                    rgba: utils.get_color_from_hex(color_code.text) if len(color_code.text) > 1 else (0, 0, 0, 1)
+                    rgba: root.color_preview
                 Rectangle:
                     pos: self.pos
                     size: self.size
             Image:
                 allow_stretch: True
                 keep_ratio: False
-                source: "images/image_without_background.jpg"
+                source: "images/image_without_background_small.jpg"
                 size: color_preview.size
                 pos: color_preview.pos
     # -------------------------------------------- #
@@ -288,7 +287,7 @@
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "Name of the new image : "
+            text: root.new_name_of_image + " : "
         NoMultilineTextInput:
             size_hint: None, None
             pos_hint: {"center_y": 0.5}
@@ -300,22 +299,24 @@
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "save image as : "
+            text: root.save_image_as + " : "    #"save image as : "
         NoMultilineTextInput:
             size_hint: 1, None
             pos_hint: {"center_y": 0.5}
             height: dp(30)
+            text: root.path_to_folder
         WidgetSpacing:
         ButtonWithImageAtCenter:
             image_source: "images/folder_icon.png"
             pos_hint: {"center_y": 0.5}
+            on_press: root.select_folder_new_picture()
     # ------------------------------------------------------------------ #
 
     # --- add the image to an .exe file --- #
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "use image as .exe file icon : "
+            text: root.text_exe_file_icon + " : "
         AppCheckBox:
             id: exe_icon
 
@@ -325,17 +326,20 @@
         height: dp(30) if exe_icon.state == "down" else 0
         WidgetSpacing:
         LabelLayoutWidget:
-            text: "Path to exe file : "
+            text: root.text_path_to_exe_file + " : "
         NoMultilineTextInput:
+            text: root.path_to_exe_file
         WidgetSpacing:
         ButtonWithImageAtCenter:
             image_source: "images/folder_icon.png"
+            on_press: root.select_path_to_exe_file()
     # ------------------------------------- #
 
     # --- button tu apply modifications to the image --- #
     WidgetSpacing:
         size: 0, dp(15)
     ProceedButton:
+        text: root.text_proceed_button + "\u25B6"    #"Proceed"
     WidgetSpacing:
         size: 0, dp(10)
     # -------------------------------------------------- #
@@ -343,13 +347,35 @@
 
 
 # ------ Main view of the image editing part ------ #
-<LayoutImageEditing>:
+<ScrollViewWithScrollBarLayout@BoxLayout>:
     ScrollView:
+        scroll_y: slider_scroll.value
         do_scroll_y: True
         do_scroll_x: False
+        bar_width: 0
         LayoutControlWidget:
             size_hint: 1, None
-            height: dp(820)
+            height: dp(730)
+    WidgetSpacing:
+        size: dp(8), 0
+    BoxLayout:
+        orientation: "vertical"
+        size_hint: None, 1
+        width: dp(8)
+        WidgetSpacing:   # We use Dummy widget because the cursor of the slider touch the list of TabbedPanelItems
+            size: dp(8), dp(18)
+        Slider:
+            cursor_image: "images/cursor_scroll_slider.png"
+            cursor_size: dp(12), dp(60)
+            min: -0.2
+            max: 1
+            id: slider_scroll
+            value: self.max
+            orientation: "vertical"
+
+
+<LayoutImageEditing>:
+    ScrollViewWithScrollBarLayout:
     WidgetSpacing:
         size: dp(18), 0
     WidgetImage:
