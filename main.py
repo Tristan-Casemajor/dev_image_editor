@@ -3,6 +3,7 @@ Config.set('graphics', 'width', '880')
 Config.set('graphics', 'height', '560')
 Config.set('graphics', 'minimum_width', '790')
 Config.set('graphics', 'minimum_height', '300')
+Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 from kivy.utils import get_color_from_hex
 from settings_app_manager import SettingsManager
 import os
