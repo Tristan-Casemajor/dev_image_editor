@@ -84,7 +84,8 @@
 # ------ this BoxLayout contains all widgets with which you can apply modifications to an image ------ #
 <LayoutControlWidget>:
     orientation: "vertical"
-    # spacing: dp(8)
+    widget_image_layout: self.widget_image_layout
+    id: control_layout
 
     # --- select the image file --- #
     LayoutSelectImagePath:
@@ -166,6 +167,7 @@
         LabelLayoutWidget:
             text: root.text_crop + " : "
         AppCheckBox:
+            on_state: control_layout.widget_image_layout.add_remove_crop_widget(self.state)
     # --------------------------------------------------- #
 
     # --- select if you want to add text to your image and enter text --- #
@@ -347,13 +349,16 @@
 
 
 # ------ Main view of the image editing part ------ #
-<ScrollViewWithScrollBarLayout@BoxLayout>:
+<ScrollViewWithScrollBarLayout>:
+    widget_image_layout: self.widget_image_layout
+    id: main_scroll
     ScrollView:
         scroll_y: slider_scroll.value
         do_scroll_y: True
         do_scroll_x: False
         bar_width: 0
         LayoutControlWidget:
+            widget_image_layout: main_scroll.widget_image_layout
             size_hint: 1, None
             height: dp(730)
     WidgetSpacing:
@@ -376,7 +381,9 @@
 
 <LayoutImageEditing>:
     ScrollViewWithScrollBarLayout:
+        widget_image_layout: widget_image_layout
     WidgetSpacing:
         size: dp(18), 0
     WidgetImage:
+        id: widget_image_layout
 # ------------------------------------------------- #

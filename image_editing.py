@@ -10,6 +10,7 @@ from image_work_dir_manager import ImageWorkDirManager
 from os import listdir, getcwd, chdir, path
 from kivy.utils import get_color_from_hex
 from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL image
+from custom_crop_widget import WidgetCrop
 
 Builder.load_file("image_editing.kv")
 
@@ -36,11 +37,15 @@ class ButtonWithImageAtCenter(Button):
     image_source = StringProperty("")
 
 
+class ScrollViewWithScrollBarLayout(BoxLayout):
+    widget_image_layout = ObjectProperty(None)
+
+
 
 # This widget contais the image selected by the user
 class WidgetImage(Widget):
     image_work = ObjectProperty(None)
-
+    crop_widget = WidgetCrop()
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Clock.schedule_interval(self.update_image, 1/2)
@@ -79,6 +84,13 @@ class WidgetImage(Widget):
             else:
                 self.image_work.size = image_base_size[0] / coef2, image_base_size[1] / coef2
 
+    def add_remove_crop_widget(self, state):
+        self.crop_widget.pos = self.center_x-self.crop_widget.width/2, self.center_y-self.crop_widget.height/2
+        if state == "down":
+            self.add_widget(self.crop_widget)
+        else:
+            self.remove_widget(self.crop_widget)
+
 
 # This Layout contains all the widget with wich the user can select options to modufy the image he selected
 class LayoutControlWidget(BoxLayout):
@@ -105,6 +117,7 @@ class LayoutControlWidget(BoxLayout):
     color_preview = ColorProperty((0, 0, 0, 0.5))
     path_to_folder = StringProperty("")
     path_to_exe_file = StringProperty("")
+    widget_image_layout = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -141,6 +154,7 @@ class LayoutControlWidget(BoxLayout):
         else:
             self.text_resize = AppTranslator().translate_text(self.text_resize, language)
             self.text_proceed_button = AppTranslator().translate_text(self.text_proceed_button, language)
+
 
 
     def set_color_preview(self, color):
