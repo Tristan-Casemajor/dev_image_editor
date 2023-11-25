@@ -1,6 +1,7 @@
 from kivy.properties import ColorProperty
 from kivy.graphics import Line, Ellipse, Rectangle, Color
 from kivy.metrics import dp
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
 
 
@@ -52,11 +53,18 @@ class WidgetCrop(Widget):
         self.verify_for_top_left_corner(touch.pos)
         self.verify_for_bottom_left_corner(touch.pos)
         self.verify_for_bottom_right_corner(touch.pos)
+        self.verify_for_croper_size()
 
     def reset_draw(self):
         self.canvas.clear()
         self.draw_canvas()
 
+    def verify_for_croper_size(self):
+        if self.height < dp(30):
+            self.height = dp(30)
+
+        if self.width < dp(30):
+            self.width = dp(30)
     def verify_for_bottom_right_corner(self, touch_coordinates):
         placement_point_of_corner = self.bottom_right_corner.pos
         point_of_corner_at_top_height = (self.bottom_right_corner.pos[0] + self.CORNER_CROP_WIDGET_SIZE,

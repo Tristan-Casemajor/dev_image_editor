@@ -1,4 +1,7 @@
 import threading
+
+from kivy.metrics import dp
+
 from app_translator import AppTranslator
 from kivy.lang import Builder
 from kivy.properties import StringProperty, ObjectProperty, Clock, ColorProperty
@@ -49,6 +52,23 @@ class WidgetImage(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Clock.schedule_interval(self.update_image, 1/2)
+        Clock.schedule_interval(self.verify_crop_widget_pos, 1/60)
+
+    def verify_crop_widget_pos(self, dt):
+        image_position = self.image_work.pos
+        image_size = self.image_work.size
+        if self.crop_widget.pos[0] < image_position[0]:
+            self.crop_widget.pos[0] = image_position[0]
+        if self.crop_widget.pos[1] < image_position[1]:
+            self.crop_widget.pos[1] = image_position[1]
+        if self.crop_widget.height < image_size[1] and self.crop_widget.pos[1]+self.crop_widget.height > image_position[1] + image_size[1]:
+            self.crop_widget.pos[1] = image_position[1] + image_size[1] - self.crop_widget.height
+        if self.crop_widget.width < image_size[0] and self.crop_widget.pos[0]+self.crop_widget.width > image_position[0] + image_size[0]:
+            self.crop_widget.pos[0] = image_position[0] + image_size[0] - self.crop_widget.width
+        '''if self.crop_widget.width > image_size[0]:
+            self.crop_widget.width = image_size[0]
+        if self.crop_widget.height > image_size[1]:
+            self.crop_widget.height = image_size[1]'''
 
     def update_image(self, dt):
         list_images_work_dir = listdir("image_work_dir")
