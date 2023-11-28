@@ -65,6 +65,7 @@ class WidgetCrop(Widget):
 
         if self.width < dp(30):
             self.width = dp(30)
+
     def verify_for_bottom_right_corner(self, touch_coordinates):
         placement_point_of_corner = self.bottom_right_corner.pos
         point_of_corner_at_top_height = (self.bottom_right_corner.pos[0] + self.CORNER_CROP_WIDGET_SIZE,

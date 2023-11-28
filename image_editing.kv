@@ -2,6 +2,14 @@
 
 
 # ------ custom widget classes ------ #
+<LabelImage>:
+    canvas.before:
+        Color:
+            rgba: 0.1, 0.1, 0.1, 0.4
+        Rectangle:
+            pos: self.pos[0]-self.texture_size[0]/2, self.pos[1]-self.texture_size[1]/2
+            size: self.texture_size
+
 <WidgetImage>:
     image_work: image_work
     Image:
@@ -9,6 +17,7 @@
         id: image_work
         keep_ratio: False
         allow_stretch: True
+        source: "images/logo_dev_icon_editor_without_background.png"
 
 <WidgetSpacing@Widget>
     size_hint: None, None
@@ -176,6 +185,7 @@
         LabelLayoutWidget:
             text: root.add_text + " : "
         AppCheckBox:
+            on_state: control_layout.widget_image_layout.add_remove_text_label(self.state)
             id: add_text
 
     ControlLayout:
@@ -184,6 +194,7 @@
         height: dp(50) if add_text.state == "down" else 0
         WidgetSpacing:
         MultilineTextInput:
+            on_text: control_layout.widget_image_layout.update_text(self.text)
     # --------------------------------------------------- #
 
     # --- select if you want to rotate the image --- #

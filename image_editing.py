@@ -1,6 +1,7 @@
 import threading
 
-from kivy.metrics import dp
+from kivy.graphics import Color, Rectangle
+from kivy.uix.label import Label
 
 from app_translator import AppTranslator
 from kivy.lang import Builder
@@ -34,6 +35,19 @@ class LayoutSelectImagePath(BoxLayout):
             ImageWorkDirManager().copy_image_to_work_dir(self.path_to_image, "image_work_dir")
 
 
+class LabelImage(Label):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = self.texture_size
+
+    def on_touch_move(self, touch):
+        self.pos = touch.pos
+
+
+
+
+
 # custom button with an image at the center, to use it ou must pass the path
 # to the image you want in the image_source property
 class ButtonWithImageAtCenter(Button):
@@ -49,6 +63,7 @@ class ScrollViewWithScrollBarLayout(BoxLayout):
 class WidgetImage(Widget):
     image_work = ObjectProperty(None)
     crop_widget = WidgetCrop()
+    label_widget = LabelImage()
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Clock.schedule_interval(self.update_image, 1/2)
@@ -65,10 +80,6 @@ class WidgetImage(Widget):
             self.crop_widget.pos[1] = image_position[1] + image_size[1] - self.crop_widget.height
         if self.crop_widget.width < image_size[0] and self.crop_widget.pos[0]+self.crop_widget.width > image_position[0] + image_size[0]:
             self.crop_widget.pos[0] = image_position[0] + image_size[0] - self.crop_widget.width
-        '''if self.crop_widget.width > image_size[0]:
-            self.crop_widget.width = image_size[0]
-        if self.crop_widget.height > image_size[1]:
-            self.crop_widget.height = image_size[1]'''
 
     def update_image(self, dt):
         list_images_work_dir = listdir("image_work_dir")
@@ -110,6 +121,16 @@ class WidgetImage(Widget):
             self.add_widget(self.crop_widget)
         else:
             self.remove_widget(self.crop_widget)
+
+    def add_remove_text_label(self, state):
+        self.label_widget.pos = self.center_x - self.label_widget.width / 2, self.center_y - self.label_widget.height / 2
+        if state == "down":
+            self.add_widget(self.label_widget)
+        else:
+            self.remove_widget(self.label_widget)
+
+    def update_text(self, text):
+        self.label_widget.text = text
 
 
 # This Layout contains all the widget with wich the user can select options to modufy the image he selected
