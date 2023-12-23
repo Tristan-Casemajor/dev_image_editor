@@ -1,5 +1,5 @@
 import threading
-from kivy.graphics import Color, Rectangle
+from kivy.graphics import Color, Rectangle, Quad, Line
 from kivy.uix.label import Label
 from app_translator import AppTranslator
 from kivy.lang import Builder
@@ -38,10 +38,13 @@ class LabelImage(Label):
         super().__init__(**kwargs)
         self.size_hint = (None, None)
         self.size = self.texture_size
+        self.font_name = "fonts/segoe_ui_bold.ttf"
 
     def on_touch_move(self, touch):
-        self.pos = touch.pos
-
+        point_left_bottom = self.pos[0]-self.texture_size[0]/2, self.pos[1]-self.texture_size[1]/2
+        point_top_right = self.pos[0]+self.texture_size[0]/2, self.pos[1]+self.texture_size[1]/2
+        if point_left_bottom[0] <= touch.pos[0] <= point_top_right[0] and point_left_bottom[1] <= touch.pos[1] <= point_top_right[1]:
+            self.pos = touch.pos
 
 
 
@@ -89,12 +92,13 @@ class WidgetImage(Widget):
         if self.label_widget.pos[1]+self.label_widget.texture_size[1]/2 < image_position[1]:
             self.label_widget.pos[1] = image_position[1]+self.label_widget.texture_size[1]/2
 
-        if self.label_widget.height < image_size[1] and self.label_widget.pos[1] + self.label_widget.height > image_position[1] + image_size[1]:
-            self.label_widget.pos[1] = image_position[1] + image_size[1] - self.label_widget.height
+        point_top_right = self.label_widget.pos[0] + self.label_widget.texture_size[0]/2, self.label_widget.pos[1] + self.label_widget.texture_size[1]/2
 
-        if self.label_widget.width < image_size[0] and self.label_widget.pos[0] + self.label_widget.width > image_position[0] + image_size[0]:
-            self.label_widget.pos[0] = image_position[0] + image_size[0] - self.label_widget.width
+        if point_top_right[1] > image_position[1]+image_size[1]:
+            self.label_widget.pos[1] = (image_position[1]+image_size[1])-self.label_widget.texture_size[1]/2
 
+        if point_top_right[0] > image_position[0]+image_size[0]:
+            self.label_widget.pos[0] = (image_position[0] + image_size[0])-self.label_widget.texture_size[0]/2
 
     def update_image(self, dt):
         list_images_work_dir = listdir("image_work_dir")
