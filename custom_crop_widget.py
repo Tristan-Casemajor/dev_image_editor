@@ -15,7 +15,7 @@ class WidgetCrop(Widget):
     corner_color = ColorProperty()
     line_color = ColorProperty()
 
-    def __init__(self, corner_color=(1, 1, 1, 1), line_color=(1, 1, 1, 1), **kwargs):
+    def __init__(self, corner_color=(0.4, 0.4, 0.4, 1), line_color=(0.4, 0.4, 0.4, 1), **kwargs):
         super().__init__(**kwargs)
         self.size = 200, 200
         self.draw_canvas()
