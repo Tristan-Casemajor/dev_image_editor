@@ -1,5 +1,4 @@
 import threading
-from kivy.graphics import Color, Rectangle, Quad, Line
 from kivy.uix.label import Label
 from app_translator import AppTranslator
 from kivy.lang import Builder
@@ -13,6 +12,7 @@ from os import listdir, getcwd, chdir, path
 from kivy.utils import get_color_from_hex
 from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL image
 from custom_crop_widget import WidgetCrop
+from functools import partial
 
 Builder.load_file("image_editing.kv")
 
@@ -38,7 +38,7 @@ class LabelImage(Label):
         super().__init__(**kwargs)
         self.size_hint = (None, None)
         self.size = self.texture_size
-        self.font_name = "fonts/segoe_ui_bold.ttf"
+        self.font_name = "fonts/arial_unicode_ms.ttf"
 
     def on_touch_move(self, touch):
         point_left_bottom = self.pos[0]-self.texture_size[0]/2, self.pos[1]-self.texture_size[1]/2
