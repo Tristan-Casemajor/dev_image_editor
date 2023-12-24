@@ -148,6 +148,7 @@
             AppCheckBox:
                 id: keep_ratio
                 state: "down" if do_not_keep_ratio.state == "normal" else "normal"
+                on_state: control_layout.widget_image_layout.reset_size_values(width, height)
         BoxLayout:
             WidgetSpacing:
             LabelLayoutWidget:
@@ -160,12 +161,14 @@
             LabelLayoutWidget:
                 text: root.text_resize_width + " : "
             NoMultilineTextInput:
+                id: width
                 size_hint: None, 1
                 width: dp(75)
             WidgetSpacing:
             LabelLayoutWidget:
                 text: root.text_resize_height + " : "
             NoMultilineTextInput:
+                id: height
                 size_hint: None, 1
                 width: dp(75)
     # -------------------------- #
@@ -238,21 +241,29 @@
         LabelLayoutWidget:
             text: "jpg : "
         AppCheckBox:
+            id: jpg
+            on_state: control_layout.widget_image_layout.checkbox_activity_control(self, bmp, gif, ico)
         WidgetSpacing:
             width: spacing
         LabelLayoutWidget:
             text: "bmp : "
         AppCheckBox:
+            id: bmp
+            on_state: control_layout.widget_image_layout.checkbox_activity_control(self, jpg, gif, ico)
         WidgetSpacing:
             width: spacing
         LabelLayoutWidget:
             text: "gif : "
         AppCheckBox:
+            id: gif
+            on_state: control_layout.widget_image_layout.checkbox_activity_control(self, bmp, jpg, ico)
         WidgetSpacing:
             width: spacing
         LabelLayoutWidget:
             text: "ico : "
         AppCheckBox:
+            id: ico
+            on_state: control_layout.widget_image_layout.checkbox_activity_control(self, bmp, gif, jpg)
     # -------------------------------- #
 
     # --- select if you want apply a color overlay --- #
@@ -312,7 +323,7 @@
     ControlLayout:
         WidgetSpacing:
         LabelLayoutWidget:
-            text: root.save_image_as + " : "    #"save image as : "
+            text: root.save_image_as + " : "
         NoMultilineTextInput:
             size_hint: 1, None
             pos_hint: {"center_y": 0.5}

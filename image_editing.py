@@ -151,6 +151,21 @@ class WidgetImage(Widget):
     def update_text(self, text):
         self.label_widget.text = text
 
+    def checkbox_activity_control(self, current_widget, *args):
+        if current_widget.state == "normal":
+            pass
+        else:
+            for widget in args:
+                if widget == current_widget:
+                    pass
+                else:
+                    widget.state = "normal"
+
+    def reset_size_values(self, width, height):
+        width.text = ""
+        height.text = ""
+
+
 
 # This Layout contains all the widget with wich the user can select options to modufy the image he selected
 class LayoutControlWidget(BoxLayout):
