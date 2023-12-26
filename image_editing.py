@@ -12,7 +12,6 @@ from os import listdir, getcwd, chdir, path
 from kivy.utils import get_color_from_hex
 from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL image
 from custom_crop_widget import WidgetCrop
-from functools import partial
 
 Builder.load_file("image_editing.kv")
 
