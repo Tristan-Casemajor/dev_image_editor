@@ -95,6 +95,9 @@
     orientation: "vertical"
     widget_image_layout: self.widget_image_layout
     id: control_layout
+    text_input_height: height
+    text_input_width: width
+    keep_ratio_checkbox: keep_ratio
 
     # --- select the image file --- #
     LayoutSelectImagePath:
@@ -162,15 +165,19 @@
                 text: root.text_resize_width + " : "
             NoMultilineTextInput:
                 id: width
+                name: "width"
                 size_hint: None, 1
                 width: dp(75)
+                on_text: control_layout.last_value(self)
             WidgetSpacing:
             LabelLayoutWidget:
                 text: root.text_resize_height + " : "
             NoMultilineTextInput:
                 id: height
+                name: "height"
                 size_hint: None, 1
                 width: dp(75)
+                on_text: control_layout.last_value(self)
     # -------------------------- #
 
     # --- select if you want to crop the image --- #
