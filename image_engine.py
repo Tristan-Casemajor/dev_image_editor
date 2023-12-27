@@ -1,6 +1,9 @@
 
 class Engine:
-    pass
+
+    @staticmethod
+    def rotation(angle):
+        pass
 
 
 

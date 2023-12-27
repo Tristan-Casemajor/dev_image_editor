@@ -1,5 +1,5 @@
 #:import webbrowser webbrowser
-
+#:import common_slider common_slider
 
 # ------ custom widget classes ------ #
 <LabelImage>:
@@ -398,14 +398,10 @@
         width: dp(8)
         WidgetSpacing:   # We use Dummy widget because the cursor of the slider touch the list of TabbedPanelItems
             size: dp(8), dp(18)
-        Slider:
-            cursor_image: "images/cursor_scroll_slider.png"
-            cursor_size: dp(12), dp(60)
+        CommonAppSlider:
             min: -0.2
-            max: 1
             id: slider_scroll
-            value: self.max
-            orientation: "vertical"
+            cursor_size: dp(12), dp(45)
 
 
 <LayoutImageEditing>:

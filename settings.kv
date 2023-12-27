@@ -1,5 +1,6 @@
 #:import Window kivy.core.window.Window
 #:import utils kivy.utils
+#:import common_slider common_slider
 
 <WidgetFlagWithCheckBox>:
     image_source: self.image_source
@@ -225,14 +226,8 @@
             DummyWidget:   # We use Dummy widget because the cursor of the slider touch the list of TabbedPanelItems
                 size_hint: None, None
                 size: dp(8), dp(18)
-            Slider:
-                cursor_image: "images/cursor_scroll_slider.png"
-                cursor_size: dp(12), dp(60)
-                min: -0.6
-                max: 1
+            CommonAppSlider:
                 id: slider_scroll
-                value: self.max
-                orientation: "vertical"
 
     LayoutApplyChange:
 

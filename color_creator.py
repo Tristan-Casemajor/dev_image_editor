@@ -18,7 +18,6 @@ from settings_app_manager import SettingsManager
 
 Builder.load_file("color_creator.kv")
 
-
 # Image with all color RGB, you can click and it return the RGB code of the color you selected
 class ColorImage(Image):
     hex_color_input = ObjectProperty(None)
