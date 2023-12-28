@@ -18,6 +18,7 @@ from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
 from kivy.uix.widget import Widget
 from app_translator import AppTranslator
 import threading
+from image_engine import Engine
 
 
 class LayoutWarningLanguage(BoxLayout):
@@ -136,24 +137,26 @@ class DevImageEditApp(App):
     def on_start(self):
         self.check_folder(".temp")
         self.check_folder(ImageWorkDirManager.work_image_path)
+        self.check_folder(Engine.work_dir)
         SettingsManager().check_settings_file()
 
     def on_stop(self):
         self.check_folder(".temp")
         self.check_folder(ImageWorkDirManager.work_image_path)
+        self.check_folder(Engine.work_dir)
 
     def build(self):
         self.icon = "images/logo_dev_icon_editor.jpg"
         self.title = "Dev Image Editor"
         return Gui()
 
-    # This function verift existence of .temp folder (important folder) and delete his
-    # content et the start and at the shutdown of the app
+    # This function verify existence of somes app folder (important folder) and delete his
+    # content at the start and at the shutdown of the app
     # do not modify this function
     @staticmethod
     def check_folder(folder_path):
-        temp_folder_exist = os.path.exists(folder_path)
-        if temp_folder_exist:
+        folder_exist = os.path.exists(folder_path)
+        if folder_exist:
             for filename in os.listdir(folder_path):
                 file_path = os.path.join(folder_path, filename)
                 if os.path.isfile(file_path):
