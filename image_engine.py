@@ -1,9 +1,9 @@
 import traceback
-
 from image_work_dir_manager import ImageWorkDirManager
 from PIL import Image, ImageDraw
 import os
 from removebg import RemoveBg
+
 
 class Engine:
     work_dir = "image_engine_work_dir"
@@ -43,21 +43,10 @@ class Engine:
     def remove_background(self, api_key, extension):
         try:
             image_path = self.get_image_path()
-            print(image_path)
             remove_bg_tool = RemoveBg(api_key, "error.log")
             remove_bg_tool.remove_background_from_img_file(image_path)
-            image = Image.open(os.path.join("image_work_dir", "work.jpg_no_bg.png"))
-            if extension not in ["png", "gif", "bmp"]:
-                path = self.get_saving_path("png")
-                image.save(path)
-            else:
-                path = self.get_saving_path(extension)
-                image.save(path)
-        except Exception as e:
-            print(e)
-            traceback.print_exc()
+        except:
             return 4
-        os.remove(os.path.join("image_work_dir", "work.jpg_no_bg.png"))
 
     def get_saving_path(self, extension):
         return os.path.join(self.work_dir, "work"+"."+extension)
