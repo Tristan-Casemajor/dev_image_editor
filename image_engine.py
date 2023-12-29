@@ -1,12 +1,14 @@
+import time
 import traceback
 from image_work_dir_manager import ImageWorkDirManager
 from PIL import Image, ImageDraw
 import os
 from removebg import RemoveBg
-
+import shutil
 
 class Engine:
     work_dir = "image_engine_work_dir"
+    work_dir_remove_background = os.path.join("image_engine_work_dir", "remove_bg_work_dir")
 
     def rotation(self, angle, extension):
         try:
@@ -21,11 +23,14 @@ class Engine:
     def resize(self, width, height, extension):
         try:
             image_path = self.get_image_path()
+            print(image_path)
             image = Image.open(image_path)
             image_modified = image.resize((int(width), int(height)))
             path = self.get_saving_path(extension)
             image_modified.save(path, quality=100)
-        except:
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
             return 2
 
     def add_color_overlay(self, color, extension):
@@ -41,20 +46,47 @@ class Engine:
             return 3
 
     def remove_background(self, api_key, extension):
+        image_path = self.get_image_path()
+        image = Image.open(image_path)
+        image_work_path = os.path.join(self.work_dir_remove_background, "work.png")
+        image.save(image_work_path)
         try:
-            image_path = self.get_image_path()
             remove_bg_tool = RemoveBg(api_key, "error.log")
-            remove_bg_tool.remove_background_from_img_file(image_path)
-        except:
+            remove_bg_tool.remove_background_from_img_file(image_work_path)
+
+            for file in os.listdir(self.work_dir):
+                time.sleep(0.6)
+                if os.path.isfile(os.path.join(self.work_dir, file)):
+                    image.close()
+                    os.remove(os.path.join(self.work_dir, file))
+
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+            for i in os.listdir(self.work_dir_remove_background):
+                print(os.path.join(self.work_dir_remove_background, i))
+                os.remove(os.path.join(self.work_dir_remove_background, i))
             return 4
+
+        else:
+            image2 = Image.open(os.path.join(self.work_dir_remove_background, "work.png_no_bg.png"))
+            saving_path = self.get_saving_path(extension)
+            image2.save(saving_path)
+
+            for i in os.listdir(self.work_dir_remove_background):
+                image.close()
+                os.remove(os.path.join(self.work_dir_remove_background, i))
 
     def get_saving_path(self, extension):
         return os.path.join(self.work_dir, "work"+"."+extension)
 
     def get_image_path(self):
         files_in_image_engine_work_dir = os.listdir(self.work_dir)
-        if files_in_image_engine_work_dir:
-            return os.path.join(self.work_dir, files_in_image_engine_work_dir[0])
+        if len(files_in_image_engine_work_dir) >= 2:
+            for i in files_in_image_engine_work_dir:
+                if os.path.isfile(os.path.join(self.work_dir, i)):
+                    print(os.path.join(self.work_dir, i))
+                    return os.path.join(self.work_dir, i)
         else:
             return ImageWorkDirManager().give_path_to_image()
 
