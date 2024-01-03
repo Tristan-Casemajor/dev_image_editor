@@ -370,7 +370,8 @@
     WidgetSpacing:
         size: 0, dp(15)
     ProceedButton:
-        text: root.text_proceed_button + "\u25B6"    #"Proceed"
+        text: root.text_proceed_button + "\u25B6"
+        on_press: control_layout.widget_image_layout.proceed()
     WidgetSpacing:
         size: 0, dp(10)
     # -------------------------------------------------- #

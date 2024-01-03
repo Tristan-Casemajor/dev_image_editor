@@ -164,6 +164,9 @@ class WidgetImage(Widget):
         width.text = ""
         height.text = ""
 
+    def proceed(self):
+        print("PROCEED")
+
 
 
 # This Layout contains all the widget with wich the user can select options to modufy the image he selected

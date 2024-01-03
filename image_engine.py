@@ -55,16 +55,13 @@ class Engine:
             remove_bg_tool.remove_background_from_img_file(image_work_path)
 
             for file in os.listdir(self.work_dir):
-                time.sleep(0.6)
                 if os.path.isfile(os.path.join(self.work_dir, file)):
                     image.close()
                     os.remove(os.path.join(self.work_dir, file))
 
         except Exception as e:
-            print(e)
-            traceback.print_exc()
             for i in os.listdir(self.work_dir_remove_background):
-                print(os.path.join(self.work_dir_remove_background, i))
+                image.close()
                 os.remove(os.path.join(self.work_dir_remove_background, i))
             return 4
 
