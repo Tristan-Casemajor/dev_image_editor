@@ -1,3 +1,4 @@
+import os
 import threading
 from kivy.uix.label import Label
 from app_translator import AppTranslator
@@ -164,8 +165,10 @@ class WidgetImage(Widget):
         width.text = ""
         height.text = ""
 
-    def proceed(self):
+    def proceed(self, rm_bg_state, rm_bg_api_key, resize_state, new_width, new_height):
         print("PROCEED")
+
+
 
 
 
@@ -198,12 +201,14 @@ class LayoutControlWidget(BoxLayout):
     text_input_width = ObjectProperty(None)
     text_input_height = ObjectProperty(None)
     keep_ratio_checkbox = ObjectProperty(None)
+    api_key_text_input = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         thread_lang = threading.Thread(target=self.language)
         thread_lang.start()
         Clock.schedule_interval(self.keep_ratio_calculator, 1/2)
+        Clock.schedule_once(self.set_api_key, 2)
 
     def language(self):
         language = AppTranslator.get_current_language()
@@ -235,7 +240,6 @@ class LayoutControlWidget(BoxLayout):
         else:
             self.text_resize = AppTranslator().translate_text(self.text_resize, language)
             self.text_proceed_button = AppTranslator().translate_text(self.text_proceed_button, language)
-
 
 
     def set_color_preview(self, color):
@@ -307,5 +311,17 @@ class LayoutControlWidget(BoxLayout):
             file = open(".temp/last_value_change.txt", "w")
             file.write("height")
             file.close()
+
+    def save_api_key(self, api_key):
+        file = open(os.path.join("user_data", "api_key.txt"), "w")
+        file.write(api_key)
+        file.close()
+
+    def set_api_key(self, dt):
+        file = open(os.path.join("user_data", "api_key.txt"), "r")
+        key = file.read()
+        file.close()
+        self.api_key_text_input.text = key
+
 class LayoutImageEditing(BoxLayout):
     pass

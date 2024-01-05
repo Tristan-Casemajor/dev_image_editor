@@ -98,6 +98,7 @@
     text_input_height: height
     text_input_width: width
     keep_ratio_checkbox: keep_ratio
+    api_key_text_input: key_input
 
     # --- select the image file --- #
     LayoutSelectImagePath:
@@ -121,6 +122,8 @@
         LabelLayoutWidget:
             text: root.text_api_key_remove_bg + " : "
         NoMultilineTextInput:
+            id: key_input
+            on_text: root.save_api_key(self.text)
         WidgetSpacing:
         ButtonWithImageAtCenter:
             image_source: "images/info_icon.png"

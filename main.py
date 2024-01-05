@@ -139,6 +139,7 @@ class DevImageEditApp(App):
         self.check_folder(ImageWorkDirManager.work_image_path)
         self.check_folder(Engine.work_dir)
         self.check_folder(os.path.join(Engine.work_dir, "remove_bg_work_dir"))
+        self.check_folder_without_deletion("user_data")
         SettingsManager().check_settings_file()
 
     def on_stop(self):
@@ -146,6 +147,7 @@ class DevImageEditApp(App):
         self.check_folder(ImageWorkDirManager.work_image_path)
         self.check_folder(Engine.work_dir)
         self.check_folder(os.path.join(Engine.work_dir, "remove_bg_work_dir"))
+        self.check_folder_without_deletion("user_data")
 
     def build(self):
         self.icon = "images/logo_dev_icon_editor.jpg"
@@ -165,6 +167,14 @@ class DevImageEditApp(App):
                     os.remove(file_path)
                 elif os.path.isdir(file_path) and file_path != os.path.join(Engine.work_dir, "remove_bg_work_dir"):
                     os.rmdir(file_path)
+        else:
+            os.mkdir(folder_path)
+
+    @staticmethod
+    def check_folder_without_deletion(folder_path):
+        folder_exist = os.path.exists(folder_path)
+        if folder_exist:
+            return
         else:
             os.mkdir(folder_path)
 
