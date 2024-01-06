@@ -202,6 +202,7 @@ class LayoutControlWidget(BoxLayout):
     text_input_height = ObjectProperty(None)
     keep_ratio_checkbox = ObjectProperty(None)
     api_key_text_input = ObjectProperty(None)
+    file_last_value_change = os.path.join(".temp", "last_value_change.txt")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -264,9 +265,10 @@ class LayoutControlWidget(BoxLayout):
             self.path_to_exe_file = path_exe[0]
 
     def keep_ratio_calculator(self, dt):
+
         if self.keep_ratio_checkbox.state == "down":
             try:
-                file = open(".temp/last_value_change.txt")
+                file = open(self.file_last_value_change, "r")
                 data = file.read()
                 file.close()
                 image = Im.open(ImageWorkDirManager().give_path_to_image())
@@ -285,7 +287,7 @@ class LayoutControlWidget(BoxLayout):
                         coef = new_height/base_height
                         base_width = image_base_size[0]
                         self.text_input_width.text = str(int(coef*base_width))
-                        file = open(".temp/last_value_change.txt", "w")
+                        file = open(self.file_last_value_change, "w")
                         file.write("height")
                         file.close()
                 else:
@@ -298,17 +300,17 @@ class LayoutControlWidget(BoxLayout):
                         coef = new_width / base_width
                         base_height = image_base_size[1]
                         self.text_input_height.text = str(int(coef * base_height))
-                        file = open(".temp/last_value_change.txt", "w")
+                        file = open(self.file_last_value_change, "w")
                         file.write("width")
                         file.close()
 
     def last_value(self, widget):
         if widget.name == "width":
-            file = open(".temp/last_value_change.txt", "w")
+            file = open(self.file_last_value_change, "w")
             file.write("width")
             file.close()
         else:
-            file = open(".temp/last_value_change.txt", "w")
+            file = open(self.file_last_value_change, "w")
             file.write("height")
             file.close()
 
