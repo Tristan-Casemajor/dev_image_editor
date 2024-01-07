@@ -24,6 +24,8 @@ class ImageWorkDirManager:
             if "work" in filename:
                 return os.path.join(self.work_image_path, filename)
             else:
-                return None
-
+                file_extension = self.get_extension_of_image(filename).lower()
+                if file_extension in ["gif", "png", "jpg", "bmp", "ico"]:
+                    os.rename(os.path.join(self.work_image_path, filename), os.path.join(self.work_image_path, "work."+file_extension))
+                    return os.path.join(self.work_image_path, "work."+file_extension)
 

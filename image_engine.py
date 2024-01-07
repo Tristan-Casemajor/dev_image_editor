@@ -14,22 +14,25 @@ class Engine:
         try:
             image_path = self.get_image_path()
             image = Image.open(image_path)
-            image_modified = image.rotate(angle)
+            image_modified = image.rotate(angle, resample=Image.BICUBIC, expand=True)
             path = self.get_saving_path(extension)
             image_modified.save(path, quality=100)
+            image.close()
+            self.remove_previous_image(image_path)
         except:
+            traceback.print_exc()
             return 1
 
     def resize(self, width, height, extension):
         try:
             image_path = self.get_image_path()
-            print(image_path)
             image = Image.open(image_path)
-            image_modified = image.resize((int(width), int(height)))
+            image_modified = image.resize((int(width), int(height)), resample=Image.LANCZOS)
             path = self.get_saving_path(extension)
             image_modified.save(path, quality=100)
+            image.close()
+            self.remove_previous_image(image_path)
         except Exception as e:
-            print(e)
             traceback.print_exc()
             return 2
 
@@ -42,6 +45,8 @@ class Engine:
             image_modified = Image.alpha_composite(image.convert('RGBA'), overlay)
             path = self.get_saving_path(extension)
             image_modified.save(path, quality=100)
+            image.close()
+            self.remove_previous_image(image_path)
         except:
             return 3
 
@@ -74,6 +79,12 @@ class Engine:
                 image.close()
                 os.remove(os.path.join(self.work_dir_remove_background, i))
 
+    def reframe(self):
+        pass
+
+    def add_text_area(self):
+        pass
+
     def get_saving_path(self, extension):
         return os.path.join(self.work_dir, "work"+"."+extension)
 
@@ -82,7 +93,6 @@ class Engine:
         if len(files_in_image_engine_work_dir) >= 2:
             for i in files_in_image_engine_work_dir:
                 if os.path.isfile(os.path.join(self.work_dir, i)):
-                    print(os.path.join(self.work_dir, i))
                     return os.path.join(self.work_dir, i)
         else:
             return ImageWorkDirManager().give_path_to_image()
@@ -97,6 +107,13 @@ class Engine:
         alpha = int(hex_code[6:8], 16) if len(hex_code) == 8 else 255
 
         return red, green, blue, alpha
+
+    def remove_previous_image(self, path):
+        if ImageWorkDirManager.work_image_path in path:
+            return
+        else:
+            if len(os.listdir(self.work_dir)) >= 3:
+                os.remove(path)
 
 
 class ActionBuilder:
