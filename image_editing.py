@@ -13,6 +13,7 @@ from os import listdir, getcwd, chdir, path
 from kivy.utils import get_color_from_hex
 from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL image
 from custom_crop_widget import WidgetCrop
+from image_engine import ActionBuilder
 
 Builder.load_file("image_editing.kv")
 
@@ -165,10 +166,31 @@ class WidgetImage(Widget):
         width.text = ""
         height.text = ""
 
-    def proceed(self, rm_bg_state, rm_bg_api_key, resize_state, new_width, new_height):
+    def proceed(self, rm_bg_state, rm_bg_api_key, resize_state, new_width, new_height,
+                reframe_state, add_text_state, text, rotate_state, angle, 
+                modify_output_state, output_format, add_overlay_state, color, 
+                name_new_image, saving_path, exe_state, path_to_exe):
+
+        crop_widget_base_coordinates = self.crop_widget.pos
+        label_add_text_base_coordinates = self.label_widget.pos
+
+        rm_bg_state_bool = False if rm_bg_state == "normal" else True
+        resize_state_bool = False if resize_state == "normal" else True
+        reframe_state_bool = False if reframe_state == "normal" else True
+        add_text_state_bool = False if add_text_state == "normal" else True
+        rotate_state_bool = False if rotate_state == "normal" else True
+        modify_output_state_bool = False if modify_output_state == "normal" else True
+        add_overlay_state_bool = False if add_overlay_state == "normal" else True
+        exe_state_bool = False if exe_state == "normal" else True
+
         print("PROCEED")
 
 
+
+
+    '''def proceed(self):
+        print(self.label_widget.pos)
+        print(self.label_widget.text)'''
 
 
 
@@ -324,6 +346,7 @@ class LayoutControlWidget(BoxLayout):
         key = file.read()
         file.close()
         self.api_key_text_input.text = key
+
 
 class LayoutImageEditing(BoxLayout):
     pass

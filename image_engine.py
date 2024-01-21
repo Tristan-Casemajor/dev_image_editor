@@ -6,6 +6,7 @@ import os
 from removebg import RemoveBg
 import shutil
 
+
 class Engine:
     work_dir = "image_engine_work_dir"
     work_dir_remove_background = os.path.join("image_engine_work_dir", "remove_bg_work_dir")
@@ -82,7 +83,10 @@ class Engine:
     def reframe(self):
         pass
 
-    def add_text_area(self):
+    def add_text_area(self, text, extension):
+        pass
+
+    def add_image_to_exe_file(self):
         pass
 
     def get_saving_path(self, extension):
@@ -117,4 +121,36 @@ class Engine:
 
 
 class ActionBuilder:
-    pass
+    ENGINE = Engine()
+    def build_action_list(self, rm_bg_state_bool, rm_bg_api_key, resize_state_bool, new_width, new_height,
+                reframe_state_bool, crop_coordinates, add_text_state_bool, text, rotate_state_bool, angle,
+                modify_output_state_bool, output_format, add_overlay_state_bool, color,
+                name_new_image, saving_path, exe_state_bool, path_to_exe):
+        actions = []
+        args = []
+        if add_text_state_bool:
+            actions.append(self.ENGINE.add_text_area)
+            args.append((text, output_format))
+        if reframe_state_bool:
+            actions.append(self.ENGINE.reframe)
+            args.append((crop_coordinates, output_format))
+        if resize_state_bool:
+            actions.append(self.ENGINE.resize)
+            args.append((new_width, new_height, output_format))
+        if rm_bg_state_bool:
+            actions.append(self.ENGINE.remove_background)
+            args.append((rm_bg_api_key, output_format))
+        if add_overlay_state_bool:
+            actions.append(self.ENGINE.add_color_overlay)
+            args.append((color, output_format))
+        if rotate_state_bool:
+            actions.append(self.ENGINE.rotation)
+            args.append((angle, output_format))
+        if exe_state_bool:
+            actions.append(self.ENGINE.add_image_to_exe_file)
+            args.append((path_to_exe))
+
+        print(actions)
+        print(args)
+    def run_action_list(self):
+        pass

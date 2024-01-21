@@ -189,6 +189,7 @@
         LabelLayoutWidget:
             text: root.text_crop + " : "
         AppCheckBox:
+            id: crop
             on_state: control_layout.widget_image_layout.add_remove_crop_widget(self.state)
     # --------------------------------------------------- #
 
@@ -207,6 +208,7 @@
         height: dp(50) if add_text.state == "down" else 0
         WidgetSpacing:
         MultilineTextInput:
+            id: text_to_add
             on_text: control_layout.widget_image_layout.update_text(self.text)
     # --------------------------------------------------- #
 
@@ -226,6 +228,7 @@
         LabelLayoutWidget:
             text: root.text_rotate_angle + " : "
         MultilineTextInput:
+            id: angle
             size_hint: None, 1
             width: dp(60)
     # --------------------------------------------- #
@@ -323,6 +326,7 @@
         LabelLayoutWidget:
             text: root.new_name_of_image + " : "
         NoMultilineTextInput:
+            id: name_new_image
             size_hint: None, None
             pos_hint: {"center_y": 0.5}
             width: dp(110)
@@ -335,6 +339,7 @@
         LabelLayoutWidget:
             text: root.save_image_as + " : "
         NoMultilineTextInput:
+            id: saving_path
             size_hint: 1, None
             pos_hint: {"center_y": 0.5}
             height: dp(30)
@@ -362,6 +367,7 @@
         LabelLayoutWidget:
             text: root.text_path_to_exe_file + " : "
         NoMultilineTextInput:
+            id: path_to_exe_file
             text: root.path_to_exe_file
         WidgetSpacing:
         ButtonWithImageAtCenter:
@@ -374,7 +380,7 @@
         size: 0, dp(15)
     ProceedButton:
         text: root.text_proceed_button + "\u25B6"
-        on_press: control_layout.widget_image_layout.proceed()
+        on_press: control_layout.widget_image_layout.proceed(bg_remove.state, key_input.text, resize.state, width.text, height.text, crop.state, add_text.state, text_to_add.text, rotate.state, angle.text, image_format.state, "png", overlay.state, color_code.text, name_new_image.text, saving_path.text, exe_icon.state, path_to_exe_file.text)
     WidgetSpacing:
         size: 0, dp(10)
     # -------------------------------------------------- #
