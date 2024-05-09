@@ -14,6 +14,7 @@ from kivy.utils import get_color_from_hex
 from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL image
 from custom_crop_widget import WidgetCrop
 from image_engine import ActionBuilder
+from coordinates_tools import *
 
 Builder.load_file("image_editing.kv")
 
@@ -184,6 +185,13 @@ class WidgetImage(Widget):
         exe_state_bool = False if exe_state == "normal" else True
 
         print("PROCEED")
+        coef = get_coef(Im.open(ImageWorkDirManager().give_path_to_image()).width, self.image_work.width)
+        print(Im.open(ImageWorkDirManager().give_path_to_image()).width)
+        calculation_of_real_coordinates(crop_widget_base_coordinates, self.image_work.pos, coef, self.image_work.height)
+        '''ActionBuilder().build_action_list(rm_bg_state_bool, rm_bg_api_key, resize_state_bool, new_width, new_height,
+                reframe_state_bool, add_text_state_bool, text, rotate_state_bool, angle,
+                modify_output_state_bool, output_format, add_overlay_state_bool, color,
+                name_new_image, saving_path, exe_state_bool, path_to_exe)'''
 
 
 

@@ -123,9 +123,9 @@ class Engine:
 class ActionBuilder:
     ENGINE = Engine()
     def build_action_list(self, rm_bg_state_bool, rm_bg_api_key, resize_state_bool, new_width, new_height,
-                reframe_state_bool, crop_coordinates, add_text_state_bool, text, rotate_state_bool, angle,
+                reframe_state_bool, add_text_state_bool, text, rotate_state_bool, angle,
                 modify_output_state_bool, output_format, add_overlay_state_bool, color,
-                name_new_image, saving_path, exe_state_bool, path_to_exe):
+                name_new_image, saving_path, exe_state_bool, path_to_exe = "", crop_coordinates=4):
         actions = []
         args = []
         if add_text_state_bool:
@@ -152,5 +152,6 @@ class ActionBuilder:
 
         print(actions)
         print(args)
+
     def run_action_list(self):
         pass
