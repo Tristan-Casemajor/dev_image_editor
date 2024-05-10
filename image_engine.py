@@ -1,3 +1,8 @@
+import os
+os.environ['KIVY_NO_ARGS'] = '1'
+from kivy.config import Config
+Config.set('graphics', 'window_state', 'invisible')
+from kivy.metrics import dp
 import time
 import traceback
 from image_work_dir_manager import ImageWorkDirManager
@@ -5,6 +10,7 @@ from PIL import Image, ImageDraw
 import os
 from removebg import RemoveBg
 import shutil
+
 
 
 class Engine:
@@ -33,8 +39,7 @@ class Engine:
             image_modified.save(path, quality=100)
             image.close()
             self.remove_previous_image(image_path)
-        except Exception as e:
-            traceback.print_exc()
+        except:
             return 2
 
     def add_color_overlay(self, color, extension):
@@ -80,8 +85,23 @@ class Engine:
                 image.close()
                 os.remove(os.path.join(self.work_dir_remove_background, i))
 
-    def reframe(self):
-        pass
+    def reframe(self, crop_widget_real_coordinates, crop_widget_real_size, extension):
+        try:
+            # TODO : replace dp(15) by the dp(15) from custon_crop_widget.py
+            image_path = self.get_image_path()
+            image = Image.open(image_path)
+            left = round(crop_widget_real_coordinates[0])
+            top = round(abs(image.height-crop_widget_real_coordinates[1])-dp(15)/2)
+            bottom = round(top + crop_widget_real_size[1]-dp(15)/2)
+            right = round(left + crop_widget_real_size[0])
+            print(left, top, right, bottom)
+            image_modified = image.crop((left, top, right, bottom))
+            path = self.get_saving_path(extension)
+            image_modified.save(path, quality=100)
+            image.close()
+            self.remove_previous_image(image_path)
+        except:
+            return 5
 
     def add_text_area(self, text, extension):
         pass
