@@ -1,0 +1,5 @@
+--> pour effacer l'ancienne icone :
+./ResourceHacker.exe -open game_without_ico.exe -save game_without_ico_temp.exe -action delete -res game_without_ico.exe -mask Icon,Icon Group
+
+--> pour ajouter la nouvelle icone :
+./ResourceHacker.exe -open game_without_ico_temp.exe -save new.exe -action addoverwrite -res icone.ico -mask ICONGROUP,MAINICON

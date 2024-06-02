@@ -1,0 +1,22 @@
+#:kivy 2.1.0
+
+Test:
+
+<ClockTest>:
+    time_str: time_str
+
+    orientation: 'vertical'
+
+    Label:
+        id: time_str
+        font_size: 40
+        bold: True
+        text: time_str.text
+
+<Test>:
+    do_default_tab: False
+
+    TabbedPanelItem:
+        text: "ClockTest"
+        font_size: 15
+        ClockTest:

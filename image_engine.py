@@ -23,7 +23,8 @@ class Engine:
             image = Image.open(image_path)
             image_modified = image.rotate(angle, resample=Image.BICUBIC, expand=True)
             path = self.get_saving_path(extension)
-            image_modified.save(path, quality=100)
+            # image_modified.save(path, quality=100)
+            self.save_image(image_modified, path)
             image.close()
             self.remove_previous_image(image_path)
         except:
@@ -94,7 +95,6 @@ class Engine:
             top = round(abs(image.height-crop_widget_real_coordinates[1])-dp(15)/2)
             bottom = round(top + crop_widget_real_size[1]-dp(15)/2)
             right = round(left + crop_widget_real_size[0])
-            print(left, top, right, bottom)
             image_modified = image.crop((left, top, right, bottom))
             path = self.get_saving_path(extension)
             image_modified.save(path, quality=100)
@@ -139,6 +139,12 @@ class Engine:
             if len(os.listdir(self.work_dir)) >= 3:
                 os.remove(path)
 
+    def save_image(self, image, path):
+        try:
+            image.save(path, quality=100)
+        except:
+            image_modified_rgb = image.convert('RGB') # to convert PNG (RGBA) to JPG (RGB)
+            image_modified_rgb.save(path, quality=100)
 
 class ActionBuilder:
     ENGINE = Engine()

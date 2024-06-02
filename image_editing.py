@@ -190,19 +190,11 @@ class WidgetImage(Widget):
         real_size_crop_widget = calculation_of_real_size_of_crop_widget(self.crop_widget.size, coef)
 
         real_cordinates_label_text = calculation_of_real_coordinates(label_add_text_base_coordinates, self.image_work.pos, coef, self.image_work.height)
-
+        print(real_cordinates_label_text)
         '''ActionBuilder().build_action_list(rm_bg_state_bool, rm_bg_api_key, resize_state_bool, new_width, new_height,
                 reframe_state_bool, add_text_state_bool, text, rotate_state_bool, angle,
                 modify_output_state_bool, output_format, add_overlay_state_bool, color,
                 name_new_image, saving_path, exe_state_bool, path_to_exe)'''
-
-
-
-
-    '''def proceed(self):
-        print(self.label_widget.pos)
-        print(self.label_widget.text)'''
-
 
 
 # This Layout contains all the widget with wich the user can select options to modufy the image he selected
