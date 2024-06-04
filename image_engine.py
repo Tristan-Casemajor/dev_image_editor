@@ -6,7 +6,7 @@ from kivy.metrics import dp
 import time
 import traceback
 from image_work_dir_manager import ImageWorkDirManager
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import os
 from removebg import RemoveBg
 import shutil
@@ -16,6 +16,7 @@ import shutil
 class Engine:
     work_dir = "image_engine_work_dir"
     work_dir_remove_background = os.path.join("image_engine_work_dir", "remove_bg_work_dir")
+    ressource_hacker_abs_path = os.path.abspath("ResourceHacker.exe")
 
     def rotation(self, angle, extension):
         try:
@@ -37,7 +38,7 @@ class Engine:
             image = Image.open(image_path)
             image_modified = image.resize((int(width), int(height)), resample=Image.LANCZOS)
             path = self.get_saving_path(extension)
-            image_modified.save(path, quality=100)
+            self.save_image(image_modified, path)
             image.close()
             self.remove_previous_image(image_path)
         except:
@@ -51,7 +52,7 @@ class Engine:
             overlay = Image.new('RGBA', image.size, overlay_color)
             image_modified = Image.alpha_composite(image.convert('RGBA'), overlay)
             path = self.get_saving_path(extension)
-            image_modified.save(path, quality=100)
+            self.save_image(image_modified, path)
             image.close()
             self.remove_previous_image(image_path)
         except:
@@ -97,20 +98,57 @@ class Engine:
             right = round(left + crop_widget_real_size[0])
             image_modified = image.crop((left, top, right, bottom))
             path = self.get_saving_path(extension)
-            image_modified.save(path, quality=100)
+            self.save_image(image_modified, path)
             image.close()
             self.remove_previous_image(image_path)
         except:
             return 5
 
-    def add_text_area(self, text, extension):
-        pass
+    def add_text_area(self, text, extension, label_text_real_coordinates, label_text_real_size):
+        try:
+            image_path = self.get_image_path()
+            image = Image.open(image_path)
+            draw = ImageDraw.Draw(image)
+            font = ImageFont.truetype("fonts/segoe_ui_bold.ttf", 30)
+            x = label_text_real_coordinates[0]-label_text_real_size[0]
+            y = label_text_real_coordinates[1]+label_text_real_size[1]
+            draw.text((x, y), text, (0, 0, 0), font=font)
+            path = self.get_saving_path(extension)
+            self.save_image(image, path)
+            image.close()
+            self.remove_previous_image(image_path)
+        except:
+            return 6
 
-    def add_image_to_exe_file(self):
-        pass
+
+    def add_image_to_exe_file(self, path_to_exe):
+        try:
+            icone = self.get_saving_path("ico")
+            icone_abs_path = os.path.abspath(icone)
+            exe_dir = self.get_exe_dir(path_to_exe)
+            app_dir = os.getcwd()
+            os.chdir(exe_dir)
+            os.system(f"{self.ressource_hacker_abs_path} -open {path_to_exe} -save exe_file_temp_1.exe -action delete -res {path_to_exe} -mask Icon,Icon Group")
+            os.system(f"{self.ressource_hacker_abs_path} -open exe_file_temp_1.exe -save exe_file_temp_2.exe -action addoverwrite -res {icone_abs_path} -mask ICONGROUP,MAINICON")
+            os.system(f"{self.ressource_hacker_abs_path} -open {path_to_exe} -save extracted_manifest.bin -action extract -mask MANIFEST,1")
+            os.system(f"{self.ressource_hacker_abs_path} -open exe_file_temp_2.exe -save exe_file_with_ico.exe -action addoverwrite -res extracted_manifest.bin -mask MANIFEST,1")
+            time.sleep(3)
+            os.remove("exe_file_temp_1.exe")
+            os.remove("exe_file_temp_2.exe")
+            os.remove("extracted_manifest.bin")
+            os.chdir(app_dir)
+        except:
+            pass
 
     def get_saving_path(self, extension):
         return os.path.join(self.work_dir, "work"+"."+extension)
+
+    def get_exe_dir(self, path):
+        path_split = path.split("\\")
+        dir_path_list = path_split[0:-1]
+        dir_path_str = "\\".join(dir_path_list)
+        return dir_path_str
+
 
     def get_image_path(self):
         files_in_image_engine_work_dir = os.listdir(self.work_dir)

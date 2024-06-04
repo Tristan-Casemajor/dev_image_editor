@@ -3,3 +3,9 @@
 
 --> pour ajouter la nouvelle icone :
 ./ResourceHacker.exe -open game_without_ico_temp.exe -save new.exe -action addoverwrite -res icone.ico -mask ICONGROUP,MAINICON
+
+--> extraire le manifest :
+./ResourceHacker.exe -open source.exe -save extracted_manifest.bin -action extract -mask MANIFEST,1
+
+--> réinjecter le manifest :
+./ResourceHacker.exe -open target.exe -save target_with_manifest.exe -action addoverwrite -res extracted_manifest.bin -mask MANIFEST,1

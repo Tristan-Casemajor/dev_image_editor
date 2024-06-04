@@ -187,10 +187,12 @@ class WidgetImage(Widget):
         print("PROCEED")
         coef = get_coef(Im.open(ImageWorkDirManager().give_path_to_image()).width, self.image_work.width)
         real_coordinates_crop_widget = calculation_of_real_coordinates(crop_widget_base_coordinates, self.image_work.pos, coef, self.image_work.height)
-        real_size_crop_widget = calculation_of_real_size_of_crop_widget(self.crop_widget.size, coef)
+        real_size_crop_widget = calculation_of_real_size(self.crop_widget.size, coef)
 
         real_cordinates_label_text = calculation_of_real_coordinates(label_add_text_base_coordinates, self.image_work.pos, coef, self.image_work.height)
+        real_size_label_text = calculation_of_real_size(self.label_widget.texture_size, coef)
         print(real_cordinates_label_text)
+        print(real_size_label_text)
         '''ActionBuilder().build_action_list(rm_bg_state_bool, rm_bg_api_key, resize_state_bool, new_width, new_height,
                 reframe_state_bool, add_text_state_bool, text, rotate_state_bool, angle,
                 modify_output_state_bool, output_format, add_overlay_state_bool, color,
@@ -208,7 +210,7 @@ class LayoutControlWidget(BoxLayout):
     text_resize_width = StringProperty("Width")
     text_resize_height = StringProperty("Height")
     text_crop = StringProperty("Reframe")
-    add_text = StringProperty("Add a text area")
+    add_text = StringProperty("Add a text area (bêta)")
     rotate_image = StringProperty("Rotate image")
     text_rotate_angle = StringProperty("Angle")
     text_output_format = StringProperty("Modify output format (png by default)")
@@ -288,6 +290,7 @@ class LayoutControlWidget(BoxLayout):
         chdir(app_work_dir)
         if len(path_exe) > 0:
             self.path_to_exe_file = path_exe[0]
+            print(self.path_to_exe_file)
 
     def keep_ratio_calculator(self, dt):
 
