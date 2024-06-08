@@ -187,9 +187,10 @@ class Engine:
 class ActionBuilder:
     ENGINE = Engine()
     def build_action_list(self, rm_bg_state_bool, rm_bg_api_key, resize_state_bool, new_width, new_height,
-                reframe_state_bool, add_text_state_bool, text, rotate_state_bool, angle,
-                modify_output_state_bool, output_format, add_overlay_state_bool, color,
-                name_new_image, saving_path, exe_state_bool, path_to_exe = "", crop_coordinates=4):
+                reframe_state_bool, crop_widget_real_coordinates, crop_widget_real_size, add_text_state_bool, text,
+                label_text_real_coordinates, label_text_real_size, rotate_state_bool, angle,
+                modify_output_state, output_format, add_overlay_state_bool, color,
+                name_new_image, saving_path, exe_state_bool, path_to_exe):
         actions = []
         args = []
         if add_text_state_bool:
@@ -197,7 +198,7 @@ class ActionBuilder:
             args.append((text, output_format))
         if reframe_state_bool:
             actions.append(self.ENGINE.reframe)
-            args.append((crop_coordinates, output_format))
+            args.append((crop_widget_real_coordinates, crop_widget_real_size, output_format))
         if resize_state_bool:
             actions.append(self.ENGINE.resize)
             args.append((new_width, new_height, output_format))
@@ -212,7 +213,7 @@ class ActionBuilder:
             args.append((angle, output_format))
         if exe_state_bool:
             actions.append(self.ENGINE.add_image_to_exe_file)
-            args.append((path_to_exe))
+            args.append(path_to_exe)
 
         print(actions)
         print(args)

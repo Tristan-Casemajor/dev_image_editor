@@ -1,3 +1,4 @@
+import json
 import os
 import threading
 from kivy.uix.label import Label
@@ -168,7 +169,8 @@ class WidgetImage(Widget):
         height.text = ""
 
     def proceed(self, rm_bg_state, rm_bg_api_key, resize_state, new_width, new_height,
-                reframe_state, add_text_state, text, rotate_state, angle, 
+                reframe_state, crop_widget_real_coordinates, crop_widget_real_size, add_text_state, text,
+                label_text_real_coordinates, label_text_real_size, rotate_state, angle,
                 modify_output_state, output_format, add_overlay_state, color, 
                 name_new_image, saving_path, exe_state, path_to_exe):
 
@@ -197,6 +199,12 @@ class WidgetImage(Widget):
                 reframe_state_bool, add_text_state_bool, text, rotate_state_bool, angle,
                 modify_output_state_bool, output_format, add_overlay_state_bool, color,
                 name_new_image, saving_path, exe_state_bool, path_to_exe)'''
+
+    def get_api_key(self):
+        file = open("user_data/api_key.txt")
+        api_key = file.read()
+        file.close()
+        return api_key
 
 
 # This Layout contains all the widget with wich the user can select options to modufy the image he selected
