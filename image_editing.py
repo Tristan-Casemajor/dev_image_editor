@@ -192,7 +192,11 @@ class WidgetImage(Widget):
         rotate_state_bool = False if rotate_state == "normal" else True
         modify_output_state_bool = False if modify_output_state == "normal" else True
         add_overlay_state_bool = False if add_overlay_state == "normal" else True
-        exe_state_bool = False if exe_state == "normal" else True; self.output_format = "ico"
+        if exe_state == "normal":
+            exe_state_bool = False
+        else :
+            exe_state_bool = True
+            self.output_format = "ico"
 
 
 

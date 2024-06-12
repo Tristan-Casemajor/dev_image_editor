@@ -93,8 +93,8 @@ class Engine:
             image = Image.open(image_path)
             left = round(crop_widget_real_coordinates[0])
             #top = round(abs(image.height-crop_widget_real_coordinates[1])-dp(15)/2)
-            top = round(crop_widget_real_coordinates[1])
-            bottom = round(top + crop_widget_real_size[1]-dp(15)/2)
+            top = round(crop_widget_real_coordinates[1] - crop_widget_real_size[1]-dp(15)/2)
+            bottom = round(crop_widget_real_coordinates[1]) #round(top + crop_widget_real_size[1]-dp(15)/2)
             right = round(left + crop_widget_real_size[0])
             image_modified = image.crop((left, top, right, bottom))
             path = self.get_saving_path(extension)
@@ -238,10 +238,11 @@ class ActionBuilder:
 
         self.run_action_list(actions, args, name_new_image, saving_path, output_format)
 
-    def run_action_list(self, actions, args, name, path, extension):
+    def run_action_list(self, actions, args, name, path, extension, exe_state_bool):
         index = 0
         for action in actions:
             action(*args[index])
             index += 1
 
-        self.ENGINE.save_image_to_user_path_selected(name, path, extension)
+        if not exe_state_bool:
+            self.ENGINE.save_image_to_user_path_selected(name, path, extension)
