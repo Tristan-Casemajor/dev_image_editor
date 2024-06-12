@@ -14,7 +14,7 @@ from os import listdir, getcwd, chdir, path
 from kivy.utils import get_color_from_hex
 from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL image
 from custom_crop_widget import WidgetCrop
-from image_engine import ActionBuilder
+from image_engine import ActionBuilder, Engine
 from coordinates_tools import *
 
 Builder.load_file("image_editing.kv")
@@ -33,7 +33,14 @@ class LayoutSelectImagePath(BoxLayout):
         chdir(app_work_dir)
         if len(path_image) > 0:
             self.path_to_image = path_image[0]
+            former_image = Engine().get_image_path()
+            try:
+                os.remove(former_image)
+            except:
+                pass
+
             ImageWorkDirManager().copy_image_to_work_dir(self.path_to_image, "image_work_dir")
+
 
 
 class LabelImage(Label):
@@ -73,6 +80,7 @@ class WidgetImage(Widget):
         Clock.schedule_interval(self.update_image, 1/2)
         Clock.schedule_interval(self.verify_crop_widget_pos, 1/60)
         Clock.schedule_interval(self.verify_label_image_pos, 1/60)
+        self.output_format = "png"
 
     def verify_crop_widget_pos(self, dt):
         image_position = self.image_work.pos
@@ -156,22 +164,22 @@ class WidgetImage(Widget):
 
     def checkbox_activity_control(self, current_widget, *args):
         if current_widget.state == "normal":
-            pass
+            self.output_format = "png"
         else:
             for widget in args:
                 if widget == current_widget:
                     pass
                 else:
                     widget.state = "normal"
+            self.output_format = current_widget.name
 
     def reset_size_values(self, width, height):
         width.text = ""
         height.text = ""
 
-    def proceed(self, rm_bg_state, rm_bg_api_key, resize_state, new_width, new_height,
-                reframe_state, crop_widget_real_coordinates, crop_widget_real_size, add_text_state, text,
-                label_text_real_coordinates, label_text_real_size, rotate_state, angle,
-                modify_output_state, output_format, add_overlay_state, color, 
+    def proceed(self, rm_bg_state, resize_state, new_width, new_height,
+                reframe_state, add_text_state, text, rotate_state, angle,
+                modify_output_state, add_overlay_state, color,
                 name_new_image, saving_path, exe_state, path_to_exe):
 
         crop_widget_base_coordinates = self.crop_widget.pos
@@ -184,22 +192,28 @@ class WidgetImage(Widget):
         rotate_state_bool = False if rotate_state == "normal" else True
         modify_output_state_bool = False if modify_output_state == "normal" else True
         add_overlay_state_bool = False if add_overlay_state == "normal" else True
-        exe_state_bool = False if exe_state == "normal" else True
+        exe_state_bool = False if exe_state == "normal" else True; self.output_format = "ico"
 
-        print("PROCEED")
+
+
         coef = get_coef(Im.open(ImageWorkDirManager().give_path_to_image()).width, self.image_work.width)
         real_coordinates_crop_widget = calculation_of_real_coordinates(crop_widget_base_coordinates, self.image_work.pos, coef, self.image_work.height)
         real_size_crop_widget = calculation_of_real_size(self.crop_widget.size, coef)
-
         real_cordinates_label_text = calculation_of_real_coordinates(label_add_text_base_coordinates, self.image_work.pos, coef, self.image_work.height)
         real_size_label_text = calculation_of_real_size(self.label_widget.texture_size, coef)
-        print(real_cordinates_label_text)
-        print(real_size_label_text)
-        '''ActionBuilder().build_action_list(rm_bg_state_bool, rm_bg_api_key, resize_state_bool, new_width, new_height,
-                reframe_state_bool, add_text_state_bool, text, rotate_state_bool, angle,
-                modify_output_state_bool, output_format, add_overlay_state_bool, color,
-                name_new_image, saving_path, exe_state_bool, path_to_exe)'''
+        try:
+            new_width = int(new_width) if new_width else 0
+            new_height = int(new_height) if new_height else 0
+            angle = int(angle) if angle else 0
+        except:
+            pass
 
+        ActionBuilder().build_action_list(rm_bg_state_bool, self.get_api_key(), resize_state_bool, new_width,
+                                          new_height, reframe_state_bool, real_coordinates_crop_widget,
+                                          real_size_crop_widget, add_text_state_bool, text, real_cordinates_label_text,
+                                          real_size_label_text, rotate_state_bool, angle, modify_output_state,
+                                          self.output_format, add_overlay_state_bool, color, name_new_image,
+                                          saving_path, exe_state_bool, path_to_exe)
     def get_api_key(self):
         file = open("user_data/api_key.txt")
         api_key = file.read()
@@ -288,7 +302,6 @@ class LayoutControlWidget(BoxLayout):
         app_work_dir = getcwd()
         path_folder = filechooser.choose_dir()
         chdir(app_work_dir)
-        print(path_folder)
         if len(path_folder) > 0:
             self.path_to_folder = path_folder[0]
 
@@ -298,7 +311,6 @@ class LayoutControlWidget(BoxLayout):
         chdir(app_work_dir)
         if len(path_exe) > 0:
             self.path_to_exe_file = path_exe[0]
-            print(self.path_to_exe_file)
 
     def keep_ratio_calculator(self, dt):
 

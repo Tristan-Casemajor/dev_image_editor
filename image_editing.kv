@@ -57,9 +57,7 @@
     background_color: (0.133, 0.867, 0.282, 1) if self.state == "normal" else (0.002, 0.654, 0.07, 1)
 
 <LayoutSelectImagePath>:
-    #size_hint: 1, 0.1
     pos_hint: {"top": 1}
-    #height: dp(30)
     WidgetSpacing:
     LabelLayoutWidget:
         text: root.parent.text_select_image + " : "
@@ -255,6 +253,7 @@
             text: "jpg : "
         AppCheckBox:
             id: jpg
+            name: "jpg"
             on_state: control_layout.widget_image_layout.checkbox_activity_control(self, bmp, gif, ico)
             active: False if exe_icon.state == "down" else False
             disabled: True if exe_icon.state == "down" else False
@@ -264,6 +263,7 @@
             text: "bmp : "
         AppCheckBox:
             id: bmp
+            name: "bmp"
             on_state: control_layout.widget_image_layout.checkbox_activity_control(self, jpg, gif, ico)
             active: False if exe_icon.state == "down" else False
             disabled: True if exe_icon.state == "down" else False
@@ -273,6 +273,7 @@
             text: "gif : "
         AppCheckBox:
             id: gif
+            name: "gif"
             on_state: control_layout.widget_image_layout.checkbox_activity_control(self, bmp, jpg, ico)
             active: False if exe_icon.state == "down" else False
             disabled: True if exe_icon.state == "down" else False
@@ -282,6 +283,7 @@
             text: "ico : "
         AppCheckBox:
             id: ico
+            name: "ico"
             on_state: control_layout.widget_image_layout.checkbox_activity_control(self, bmp, gif, jpg)
             active: True if exe_icon.state == "down" else False
             disabled: True if exe_icon.state == "down" else False
@@ -383,12 +385,12 @@
             on_press: root.select_path_to_exe_file()
     # ------------------------------------- #
 
-    # --- button tu apply modifications to the image --- #
+    # --- button to apply modifications to the image --- #
     WidgetSpacing:
         size: 0, dp(15)
     ProceedButton:
         text: root.text_proceed_button + "\u25B6"
-        on_press: control_layout.widget_image_layout.proceed(bg_remove.state, key_input.text, resize.state, width.text, height.text, crop.state, add_text.state, text_to_add.text, rotate.state, angle.text, image_format.state, "png", overlay.state, color_code.text, name_new_image.text, saving_path.text, exe_icon.state, path_to_exe_file.text)
+        on_press: control_layout.widget_image_layout.proceed(bg_remove.state, resize.state, width.text, height.text, crop.state, add_text.state, text_to_add.text, rotate.state, angle.text, image_format.state, overlay.state, color_code.text, name_new_image.text, saving_path.text, exe_icon.state, path_to_exe_file.text)
     WidgetSpacing:
         size: 0, dp(10)
     # -------------------------------------------------- #

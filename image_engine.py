@@ -29,7 +29,6 @@ class Engine:
             image.close()
             self.remove_previous_image(image_path)
         except:
-            traceback.print_exc()
             return 1
 
     def resize(self, width, height, extension):
@@ -93,7 +92,8 @@ class Engine:
             image_path = self.get_image_path()
             image = Image.open(image_path)
             left = round(crop_widget_real_coordinates[0])
-            top = round(abs(image.height-crop_widget_real_coordinates[1])-dp(15)/2)
+            #top = round(abs(image.height-crop_widget_real_coordinates[1])-dp(15)/2)
+            top = round(crop_widget_real_coordinates[1])
             bottom = round(top + crop_widget_real_size[1]-dp(15)/2)
             right = round(left + crop_widget_real_size[0])
             image_modified = image.crop((left, top, right, bottom))
@@ -121,7 +121,7 @@ class Engine:
             return 6
 
 
-    def add_image_to_exe_file(self, path_to_exe):
+    def add_image_to_exe_file(self, path_to_exe, a):
         try:
             icone = self.get_saving_path("ico")
             icone_abs_path = os.path.abspath(icone)
@@ -184,8 +184,29 @@ class Engine:
             image_modified_rgb = image.convert('RGB') # to convert PNG (RGBA) to JPG (RGB)
             image_modified_rgb.save(path, quality=100)
 
+    def save_image_to_user_path_selected(self, name, path, extension):
+        name = self.vefify_file_name(name, extension)
+        source = self.get_image_path()
+        destination = f"{path}\\{name}"
+        shutil.copy2(source, destination)
+
+    @staticmethod
+    def vefify_file_name(name, extension):
+        if not name.isspace or name not in ["con", "prn", "CON", "PRN", "AUX", "aux", "NUL", "nul", "COM1", "COM2",
+                                            "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9"]:
+            for i in name:
+                if i in ["/", "\\", ":", "*", "?", '"', ">", "<", "|"]:
+                    name = f"refactor.{extension}"
+                    return name
+            name = f"{name}.{extension}"
+            return name
+        else:
+            name = f"refactor.{extension}"
+            return name
+
 class ActionBuilder:
     ENGINE = Engine()
+
     def build_action_list(self, rm_bg_state_bool, rm_bg_api_key, resize_state_bool, new_width, new_height,
                 reframe_state_bool, crop_widget_real_coordinates, crop_widget_real_size, add_text_state_bool, text,
                 label_text_real_coordinates, label_text_real_size, rotate_state_bool, angle,
@@ -195,7 +216,7 @@ class ActionBuilder:
         args = []
         if add_text_state_bool:
             actions.append(self.ENGINE.add_text_area)
-            args.append((text, output_format))
+            args.append((text, output_format, label_text_real_coordinates, label_text_real_size))
         if reframe_state_bool:
             actions.append(self.ENGINE.reframe)
             args.append((crop_widget_real_coordinates, crop_widget_real_size, output_format))
@@ -213,10 +234,14 @@ class ActionBuilder:
             args.append((angle, output_format))
         if exe_state_bool:
             actions.append(self.ENGINE.add_image_to_exe_file)
-            args.append(path_to_exe)
+            args.append((path_to_exe, ""))
 
-        print(actions)
-        print(args)
+        self.run_action_list(actions, args, name_new_image, saving_path, output_format)
 
-    def run_action_list(self):
-        pass
+    def run_action_list(self, actions, args, name, path, extension):
+        index = 0
+        for action in actions:
+            action(*args[index])
+            index += 1
+
+        self.ENGINE.save_image_to_user_path_selected(name, path, extension)
