@@ -236,7 +236,7 @@ class ActionBuilder:
             actions.append(self.ENGINE.add_image_to_exe_file)
             args.append((path_to_exe, ""))
 
-        self.run_action_list(actions, args, name_new_image, saving_path, output_format)
+        self.run_action_list(actions, args, name_new_image, saving_path, output_format, exe_state_bool)
 
     def run_action_list(self, actions, args, name, path, extension, exe_state_bool):
         index = 0
