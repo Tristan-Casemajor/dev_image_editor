@@ -19,6 +19,18 @@
         allow_stretch: True
         source: "images/logo_dev_icon_editor_without_background.png"
 
+<LoadingAnimation>:
+    size_hint: None, None
+    size: dp(50), dp(50)
+    source: "images/loading_anim.gif"
+    anim_delay: 1/30
+    pos_hint: {"center_x": 0.5}
+
+<LoadingLabel>:
+    size_hint: None, None
+    pos_hint: {"center_x": 0.5}
+    size: self.texture_size
+
 <WidgetSpacing@Widget>
     size_hint: None, None
     size: dp(8), 0
@@ -394,6 +406,19 @@
     WidgetSpacing:
         size: 0, dp(10)
     # -------------------------------------------------- #
+
+    # --- work informations --- #
+    WidgetSpacing:
+        size: 0, dp(25)
+    LoadingLayout:
+        id: loading_layout
+        size_hint: 1, None
+        orientation: "vertical"
+        LoadingAnimation:
+        LoadingLabel:
+            text: loading_layout.loading_text
+    WidgetSpacing:
+        size: 0, dp(8)
 # ------------------------------------------------------------------------ #
 
 

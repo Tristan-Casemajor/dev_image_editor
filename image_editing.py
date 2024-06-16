@@ -1,10 +1,13 @@
 import json
 import os
 import threading
+import time
+
+from kivy.metrics import dp
 from kivy.uix.label import Label
 from app_translator import AppTranslator
 from kivy.lang import Builder
-from kivy.properties import StringProperty, ObjectProperty, Clock, ColorProperty
+from kivy.properties import StringProperty, ObjectProperty, Clock, ColorProperty, NumericProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.widget import Widget
@@ -16,6 +19,7 @@ from PIL import Image as Im   # Im to avoid conflicts between Kivy Image and PIL
 from custom_crop_widget import WidgetCrop
 from image_engine import ActionBuilder, Engine
 from coordinates_tools import *
+from kivy.uix.image import Image
 
 Builder.load_file("image_editing.kv")
 
@@ -69,12 +73,45 @@ class ScrollViewWithScrollBarLayout(BoxLayout):
     widget_image_layout = ObjectProperty(None)
 
 
+class LoadingAnimation(Image):
+    pass
+
+
+class LoadingLabel(Label):
+    pass
+
+
+class LoadingLayout(BoxLayout):
+    loading_text = StringProperty("applying changes")
+    def __init__(self, **kwags):
+        super().__init__(**kwags)
+        self.language()
+        self.opacity = 0
+        self.height = 0
+        Clock.schedule_interval(self.set_loading_anim, 1/5)
+
+    def set_loading_anim(self, *args):
+        activation_file = os.path.exists(".temp/loading_activation.txt")
+
+        if activation_file:
+            self.opacity = 1
+            self.height = dp(65)
+        else:
+            self.opacity = 0
+            self.height = 0
+
+    def language(self):
+        language = AppTranslator.get_current_language()
+        self.loading_text = AppTranslator().translate_text(self.loading_text, language)
 
 # This widget contais the image selected by the user
 class WidgetImage(Widget):
     image_work = ObjectProperty(None)
     crop_widget = WidgetCrop()
     label_widget = LabelImage()
+    loading_height = NumericProperty(0)
+    loading_opacity = NumericProperty(0)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Clock.schedule_interval(self.update_image, 1/2)
@@ -177,10 +214,24 @@ class WidgetImage(Widget):
         width.text = ""
         height.text = ""
 
+
     def proceed(self, rm_bg_state, resize_state, new_width, new_height,
                 reframe_state, add_text_state, text, rotate_state, angle,
                 modify_output_state, add_overlay_state, color,
                 name_new_image, saving_path, exe_state, path_to_exe):
+        proceed_th = threading.Thread(target=self.proceed_thread, args=(rm_bg_state, resize_state, new_width, new_height,
+                reframe_state, add_text_state, text, rotate_state, angle,
+                modify_output_state, add_overlay_state, color,
+                name_new_image, saving_path, exe_state, path_to_exe))
+        proceed_th.start()
+
+    def proceed_thread(self, rm_bg_state, resize_state, new_width, new_height,
+                reframe_state, add_text_state, text, rotate_state, angle,
+                modify_output_state, add_overlay_state, color,
+                name_new_image, saving_path, exe_state, path_to_exe):
+
+        file = open(".temp/loading_activation.txt", "w")
+        file.close()
 
         crop_widget_base_coordinates = self.crop_widget.pos
         label_add_text_base_coordinates = self.label_widget.pos
@@ -194,17 +245,10 @@ class WidgetImage(Widget):
         add_overlay_state_bool = False if add_overlay_state == "normal" else True
         if exe_state == "normal":
             exe_state_bool = False
-        else :
+        else:
             exe_state_bool = True
             self.output_format = "ico"
 
-
-
-        coef = get_coef(Im.open(ImageWorkDirManager().give_path_to_image()).width, self.image_work.width)
-        real_coordinates_crop_widget = calculation_of_real_coordinates(crop_widget_base_coordinates, self.image_work.pos, coef, self.image_work.height)
-        real_size_crop_widget = calculation_of_real_size(self.crop_widget.size, coef)
-        real_cordinates_label_text = calculation_of_real_coordinates(label_add_text_base_coordinates, self.image_work.pos, coef, self.image_work.height)
-        real_size_label_text = calculation_of_real_size(self.label_widget.texture_size, coef)
         try:
             new_width = int(new_width) if new_width else 0
             new_height = int(new_height) if new_height else 0
@@ -212,13 +256,29 @@ class WidgetImage(Widget):
         except:
             pass
 
-        ActionBuilder().build_action_list(rm_bg_state_bool, self.get_api_key(), resize_state_bool, new_width,
-                                          new_height, reframe_state_bool, real_coordinates_crop_widget,
-                                          real_size_crop_widget, add_text_state_bool, text, real_cordinates_label_text,
-                                          real_size_label_text, rotate_state_bool, angle, modify_output_state,
-                                          self.output_format, add_overlay_state_bool, color, name_new_image,
-                                          saving_path, exe_state_bool, path_to_exe)
-    def get_api_key(self):
+        try:
+            coef = get_coef(Im.open(ImageWorkDirManager().give_path_to_image()).width, self.image_work.width)
+        except:
+            pass
+        else:
+            real_coordinates_crop_widget = calculation_of_real_coordinates(crop_widget_base_coordinates, self.image_work.pos, coef, self.image_work.height)
+            real_size_crop_widget = calculation_of_real_size(self.crop_widget.size, coef)
+            real_cordinates_label_text = calculation_of_real_coordinates(label_add_text_base_coordinates, self.image_work.pos, coef, self.image_work.height)
+            real_size_label_text = calculation_of_real_size(self.label_widget.texture_size, coef)
+
+            try:
+                ActionBuilder().build_action_list(rm_bg_state_bool, self.get_api_key(), resize_state_bool, new_width,
+                                                  new_height, reframe_state_bool, real_coordinates_crop_widget,
+                                                  real_size_crop_widget, add_text_state_bool, text, real_cordinates_label_text,
+                                                  real_size_label_text, rotate_state_bool, angle, modify_output_state,
+                                                  self.output_format, add_overlay_state_bool, color, name_new_image,
+                                                  saving_path, exe_state_bool, path_to_exe)
+            except:
+                pass
+        time.sleep(4)
+        os.remove(".temp/loading_activation.txt")
+    @staticmethod
+    def get_api_key():
         file = open("user_data/api_key.txt")
         api_key = file.read()
         file.close()
@@ -256,6 +316,7 @@ class LayoutControlWidget(BoxLayout):
     keep_ratio_checkbox = ObjectProperty(None)
     api_key_text_input = ObjectProperty(None)
     file_last_value_change = os.path.join(".temp", "last_value_change.txt")
+
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
